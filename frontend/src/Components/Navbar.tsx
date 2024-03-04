@@ -1,5 +1,6 @@
 import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
+import Button from "./Button";
 
 const navbarItem = [
   { name: "Men" },
@@ -52,7 +53,9 @@ export function Navbar({ gapRef }: Props) {
           <Icons icon="logo" />
         </div>
         <div className="flex gap-8 [&>li:hover]:text-main/60 [&>*]:cursor-pointer justify-self-end">
-          <li>Login</li>
+          <li>
+            <Button to="/login">Login</Button>
+          </li>
           <li>Wishlist</li>
           <li>Cart</li>
         </div>
