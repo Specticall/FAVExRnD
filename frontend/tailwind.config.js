@@ -15,6 +15,7 @@ export default {
         small: "0.875rem",
         heading: "1rem",
         title: "1.5rem",
+        large: "2rem",
       },
       fontFamily: {
         body: "Archivo",

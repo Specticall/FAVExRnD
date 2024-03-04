@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import Icons from "../Components/Icons";
 
 export function HeroBG() {
@@ -13,16 +12,12 @@ export function HeroBG() {
     </div>
   );
 }
-export const Hero = forwardRef<HTMLElement>((_, ref) => {
+export function Hero() {
   return (
-    <section
-      id="#hero"
-      className="pt-40 mx-auto max-w-[70rem] text-center"
-      ref={ref}
-    >
+    <section id="#hero" className="pt-40 mx-auto max-w-[70rem] text-center">
       <h1 className="text-hero text-main leading-[120%] max-w-[45rem] mx-auto font-light tracking-tight mb-8">
-        Quality meets style with feline{" "}
-        <span className="font-normal tracking-normal">finesse</span>
+        Quality meets style with feline
+        <span className="font-normal tracking-normal"> finesse</span>
       </h1>
       <p className="max-w-[30rem] leading-[175%] mx-auto text-light">
         Our Garments, Woven with Whiskered Precision and Hat-tastic Flair,
@@ -30,4 +25,4 @@ export const Hero = forwardRef<HTMLElement>((_, ref) => {
       </p>
     </section>
   );
-});
+}
