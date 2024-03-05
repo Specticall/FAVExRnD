@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
-import { productList } from "../Services/mockAPI";
+import { productList } from "../Services/API";
 import { convertToRupiah } from "../utils/helper";
 
 export default function ProductList() {

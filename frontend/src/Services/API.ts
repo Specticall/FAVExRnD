@@ -1,19 +1,3 @@
-/*
-
-products: [
-      {
-        id: string,
-        name: string,
-        img: string,
-        description: string,
-        price: float,
-        stock: integer,
-        category:[string],
-      }
-    ]
-
-*/
-
 type TProduct = {
   id: string;
   name: string;
@@ -22,6 +6,7 @@ type TProduct = {
   price: number;
   stock: number;
   category: string[];
+  discount?: number;
 };
 
 const IMAGE_PATH = "/assets/products";
@@ -65,3 +50,5 @@ export const productList: TProduct[] = [
     category: ["Hats", "Unisex"],
   },
 ];
+export const API_URL = "http://127.0.0.1:8000";
+export type APIError = { status: number; data: unknown };
