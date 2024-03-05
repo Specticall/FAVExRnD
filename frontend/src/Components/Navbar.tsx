@@ -1,5 +1,6 @@
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
+import Button from "./Button";
 
 const navbarItem = [
   { name: "Men" },
@@ -10,34 +11,36 @@ const navbarItem = [
 
 type Props = {
   // Used so that the intersection observer can observer the hero element (used for scroll reveal);
-  heroRef: MutableRefObject<HTMLElement | null>;
+  gapRef: MutableRefObject<HTMLElement | null>;
 };
 
-export function Navbar({ heroRef }: Props) {
+export function Navbar({ gapRef }: Props) {
   const [showBackground, setShowBackground] = useState(false);
 
+  // Reveals navbar background when the viewport "leaves" the top div element
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          console.log(entry);
           setShowBackground(!entry.isIntersecting);
         });
       },
       {
-        threshold: 0.9,
+        threshold: 0.99,
       }
     );
 
-    if (heroRef.current) observer.observe(heroRef.current);
+    if (gapRef.current) observer.observe(gapRef.current);
 
     return () => {
       observer.disconnect();
     };
-  }, [heroRef]);
+  }, [gapRef]);
 
   return (
     <nav
-      className="sticky top-0 width-full duration-150"
+      className="sticky top-0 width-full duration-150 z-50"
       style={{ background: showBackground ? "white" : "transparent" }}
     >
       <ul className="font-body grid grid-cols-3 items-center text-small max-w-[70rem] mx-auto py-1 px-8">
@@ -50,7 +53,9 @@ export function Navbar({ heroRef }: Props) {
           <Icons icon="logo" />
         </div>
         <div className="flex gap-8 [&>li:hover]:text-main/60 [&>*]:cursor-pointer justify-self-end">
-          <li>Login</li>
+          <li>
+            <Button to="/login">Login</Button>
+          </li>
           <li>Wishlist</li>
           <li>Cart</li>
         </div>
