@@ -59,7 +59,54 @@ class UserController extends Controller
             return response()->json([
                 'status' => 500,
                 'data' => [
-                    'msg' => $th->getMessage()
+                    'msg' => "Internal server error!"
+                ]
+            ], 500);
+        }
+    }
+
+    public function loginUser(Request $request)
+    {
+        try {
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'email' => 'required|email',
+                    'password' => 'required'
+                ]
+            );
+
+            if ($validateUser->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'data' => [
+                        'msg' => 'Invalid email or password!',
+                    ]
+                ], 400);
+            }
+
+            if (!Auth::attempt($request->only(['email', 'password']))) {
+                return response()->json([
+                    'status' => 400,
+                    'data' => [
+                        'msg' => 'Invalid email or password!',
+                    ]
+                ], 400);
+            }
+
+            $user = User::where('email', $request->email)->first();
+
+            return response()->json([
+                'status' => 200,
+                'data' => [
+                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                ]
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 500,
+                'data' => [
+                    'msg' => "Internal server error!"
                 ]
             ], 500);
         }
