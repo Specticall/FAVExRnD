@@ -4,3 +4,8 @@ export function convertToRupiah(price: number) {
     currency: "IDR",
   }).format(price);
 }
+
+export function isAuthenticated() {
+  const token = localStorage.getItem("token");
+  return token ? true : false;
+}

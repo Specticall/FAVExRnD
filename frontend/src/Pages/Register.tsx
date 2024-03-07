@@ -96,8 +96,8 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const handleShowpassword = () => setShowPassword((cur) => !cur);
   return (
-    <main className="relative">
-      <section className="max-w-[70rem] mx-auto grid place-items-center min-h-screen py-6">
+    <main className="relative min-h-screen">
+      <section className="max-w-[70rem] mx-auto grid place-items-center h-full py-6">
         <Button
           className="absolute top-[2rem] left-[4rem] font-body flex items-center justify-center gap-2 hover:text-light"
           to="/home"
@@ -175,14 +175,18 @@ export default function Register() {
               }
             />
 
-            <button className="bg-main w-full max-w-[12rem] mx-auto py-3 text-body rounded-md hover:bg-light">
+            <Button
+              className="bg-main w-full max-w-[12rem] mx-auto py-3 text-body rounded-md hover:bg-light"
+              disabled={mutation.isLoading}
+            >
               Register
-            </button>
+            </Button>
             <p className="text-main font-body">
               Already have an account?{" "}
               <Button
                 className="underline font-bold cursor-pointer hover:text-light"
-                to="/register"
+                to="/login"
+                disabled={mutation.isLoading}
               >
                 Login here
               </Button>

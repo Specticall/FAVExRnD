@@ -1,6 +1,7 @@
 import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
 import Button from "./Button";
+import { useAuth } from "../Context/HomeContext";
 
 const navbarItem = [
   { name: "Men" },
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export function Navbar({ gapRef }: Props) {
+  const { isAuthenticated, logoutUser } = useAuth();
   const [showBackground, setShowBackground] = useState(false);
 
   // Reveals navbar background when the viewport "leaves" the top div element
@@ -53,9 +55,15 @@ export function Navbar({ gapRef }: Props) {
           <Icons icon="logo" />
         </div>
         <div className="flex gap-8 [&>li:hover]:text-main/60 [&>*]:cursor-pointer justify-self-end">
-          <li>
-            <Button to="/login">Login</Button>
-          </li>
+          {isAuthenticated ? (
+            <li>
+              <Button onClick={logoutUser}>Logout</Button>
+            </li>
+          ) : (
+            <li>
+              <Button to="/login">Login</Button>
+            </li>
+          )}
           <li>Wishlist</li>
           <li>Cart</li>
         </div>

@@ -3,27 +3,63 @@ import Icons from "../Components/Icons";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Button from "../Components/Button";
 import { TextInput } from "../Components/TextInput";
+import { useMutation } from "react-query";
+import axios, { AxiosError } from "axios";
+import { APIError, API_URL } from "../Services/API";
 
 type TLoginFields = {
   email: string;
   password: string;
 };
 
+type TAPILoginResponse = {
+  status: number;
+  data: {
+    token: string;
+  };
+};
+
+const loginUser = (data: TLoginFields) => {
+  return axios.post(`${API_URL}/api/login`, data);
+};
+
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<TLoginFields>();
 
+  const mutation = useMutation(loginUser, {
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as APIError;
+      if (errorData.data) {
+        setError("password", {
+          type: "server",
+          message: "Invalid email or password",
+        });
+        setError("email", {
+          type: "server",
+          message: "Invalid email or password",
+        });
+      }
+    },
+    onSuccess: (data) => {
+      const token = (data.data as TAPILoginResponse).data.token;
+      localStorage.setItem("token", token);
+    },
+  });
+
   const onSubmit: SubmitHandler<TLoginFields> = (value) => {
     console.log(value);
+    mutation.mutate(value);
   };
 
   const [showPassword, setShowPassword] = useState(false);
   const handleShowpassword = () => setShowPassword((cur) => !cur);
   return (
-    <main className="relative">
+    <main className="relative min-h-screen">
       <section className="max-w-[70rem] mx-auto grid place-items-center min-h-screen py-6">
         <Button
           className="absolute top-[2rem] left-[4rem] font-body flex items-center justify-center gap-2 hover:text-light"
