@@ -35,7 +35,9 @@ class UserController extends Controller
 
                 return response()->json([
                     'status' => 400,
-                    'data' => $errors
+                    'data' => [
+                        'msg' => $errors
+                    ]
                 ], 400);
             }
 
