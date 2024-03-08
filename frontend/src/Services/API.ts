@@ -1,8 +1,8 @@
-type TProduct = {
+export type TProduct = {
   id: string;
   name: string;
   img: string;
-  description: string;
+  desc: string;
   price: number;
   stock: number;
   category: string[];
@@ -16,17 +16,17 @@ export const productList: TProduct[] = [
     id: "1",
     name: "Classic Polo Shirt",
     img: `${IMAGE_PATH}/image 1-1.png`,
-    description: "A classic polo shirt made from premium cotton.",
+    desc: "A classic polo shirt made from premium cotton.",
     price: 599000,
     stock: 20,
     category: ["Polo Shirts", "Men"],
-    discount: 0.5,
+    discount: 0.75,
   },
   {
     id: "2",
     name: "Casual Trousers",
     img: `${IMAGE_PATH}/image 1-2.png`,
-    description: "Casual trousers perfect for both work and play.",
+    desc: "Casual trousers perfect for both work and play.",
     price: 1399000,
     stock: 15,
     category: ["Trousers", "Men"],
@@ -35,7 +35,7 @@ export const productList: TProduct[] = [
     id: "3",
     name: "Knitted Sweater",
     img: `${IMAGE_PATH}/image 1-3.png`,
-    description: "A warm, knitted sweater for cold days.",
+    desc: "A warm, knitted sweater for cold days.",
     price: 899000,
     stock: 10,
     category: ["Knitwear", "Women"],
@@ -44,7 +44,16 @@ export const productList: TProduct[] = [
     id: "4",
     name: "Stylish Hat",
     img: `${IMAGE_PATH}/image 1-4.png`,
-    description: "A stylish hat to complete your outfit.",
+    desc: "A stylish hat to complete your outfit.",
+    price: 899000,
+    stock: 30,
+    category: ["Hats", "Unisex"],
+  },
+  {
+    id: "5",
+    name: "Stylish Hat",
+    img: `${IMAGE_PATH}/image 1-4.png`,
+    desc: "A stylish hat to complete your outfit.",
     price: 899000,
     stock: 30,
     category: ["Hats", "Unisex"],
@@ -52,3 +61,20 @@ export const productList: TProduct[] = [
 ];
 export const API_URL = "http://127.0.0.1:8000";
 export type APIError = { status: number; data: unknown };
+export type TUserData = {
+  name: string;
+  email: string;
+  address: string;
+  phone: string;
+  birthData: string;
+  id: string;
+};
+export const productType = [
+  "Sweatshirts",
+  "Knitwear",
+  "Polo Shirts",
+  "T-shirt",
+  "Shirts",
+  "Trousers",
+  "Hats",
+];

@@ -1,21 +1,6 @@
-import { useEffect } from "react";
 import Button from "../Components/Button";
 import Icons from "../Components/Icons";
-import { useAuth, useHome } from "../Context/HomeContext";
-
-// export function HeroBG() {
-//   return (
-//     <div className="absolute flex justify-between w-full top-[6rem] z-[-1]">
-//       <div className="scale-75 origin-left">
-//         <Icons icon="heroLeft" />
-//       </div>
-//       <div className="scale-75 origin-right">
-//         <Icons icon="heroRight" />
-//       </div>
-//     </div>
-
-//   );
-// }
+import { useAuth } from "../Context/AuthContext";
 
 export function HeroBG() {
   return (
@@ -29,10 +14,10 @@ export function HeroBG() {
     </div>
   );
 }
-export function Hero() {
+
+export function Hero({ username }: { username: string | undefined }) {
   const { isAuthenticated } = useAuth();
 
-  const username = "[Username]";
   return (
     <section id="#hero" className="pt-40 mx-auto max-w-[70rem] text-center">
       {isAuthenticated && (
@@ -50,7 +35,7 @@ export function Hero() {
       </p>
       {isAuthenticated || (
         <Button
-          to="/register"
+          to="/login"
           className="bg-main px-16 py-3 rounded-md text-body font-body text-heading mt-12 hover:bg-light"
         >
           Login

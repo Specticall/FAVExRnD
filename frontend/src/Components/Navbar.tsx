@@ -1,7 +1,7 @@
 import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
 import Button from "./Button";
-import { useAuth } from "../Context/HomeContext";
+import { useAuth } from "../Context/AuthContext";
 
 const navbarItem = [
   { name: "Men" },
@@ -54,7 +54,7 @@ export function Navbar({ gapRef }: Props) {
         <div className="scale-[60%] justify-self-center">
           <Icons icon="logo" />
         </div>
-        <div className="flex gap-8 [&>li:hover]:text-main/60 [&>*]:cursor-pointer justify-self-end">
+        <div className="flex gap-8 [&>li:hover]:text-main/60 [&>*]:cursor-pointer justify-self-end items-center">
           {isAuthenticated ? (
             <li>
               <Button onClick={logoutUser}>Logout</Button>
@@ -66,6 +66,11 @@ export function Navbar({ gapRef }: Props) {
           )}
           <li>Wishlist</li>
           <li>Cart</li>
+          {isAuthenticated && (
+            <li className="bg-main px-4 py-2 text-body rounded-md hover:bg-light [&:hover>button]:text-body">
+              <Button to="/dashboard">Dashboard</Button>
+            </li>
+          )}
         </div>
       </ul>
     </nav>

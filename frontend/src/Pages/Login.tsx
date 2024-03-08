@@ -6,6 +6,7 @@ import { TextInput } from "../Components/TextInput";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import { APIError, API_URL } from "../Services/API";
+import { useNavigate } from "react-router-dom";
 
 type TLoginFields = {
   email: string;
@@ -24,6 +25,7 @@ const loginUser = (data: TLoginFields) => {
 };
 
 export default function Login() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -48,11 +50,11 @@ export default function Login() {
     onSuccess: (data) => {
       const token = (data.data as TAPILoginResponse).data.token;
       localStorage.setItem("token", token);
+      navigate("/home");
     },
   });
 
   const onSubmit: SubmitHandler<TLoginFields> = (value) => {
-    console.log(value);
     mutation.mutate(value);
   };
 
@@ -106,9 +108,12 @@ export default function Login() {
               }
             />
 
-            <button className="bg-main w-full max-w-[12rem] mx-auto py-3 text-body rounded-md hover:bg-light">
+            <Button
+              className="bg-main w-full max-w-[12rem] mx-auto py-3 text-body rounded-md hover:bg-light"
+              disabled={mutation.isLoading}
+            >
               Login
-            </button>
+            </Button>
             <p className="text-main font-body">
               Don't have an account?{" "}
               <Button
