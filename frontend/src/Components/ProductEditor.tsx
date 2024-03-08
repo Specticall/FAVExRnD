@@ -2,15 +2,13 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Button from "./Button";
 import { TextInput } from "./TextInput";
 import MultiDropdownInput from "./MultiDropdownInput";
-import { API_URL, TAPIResponse, TProduct, productType } from "../Services/API";
+import { productType } from "../Services/API";
 import Counter from "./Counter";
 import ImageInput from "./ImageInput";
 import { useDashboard } from "../Context/DashboardContext";
-import { useMutation } from "react-query";
-import axios, { AxiosError } from "axios";
 import { useState } from "react";
-import { convertImageToBase64, isAPIDeleteResponse } from "../utils/helper";
-import { redirect, useNavigate, useRevalidator } from "react-router-dom";
+import { convertImageToBase64 } from "../utils/helper";
+import useProductEditorMutation from "../Hooks/useProductEditorMutation";
 
 function ProductNavbar() {
   return (
@@ -38,89 +36,12 @@ type TProductProperties = {
   categories: string[];
 };
 
-type TProductWithoutId = Omit<TProduct, "id">;
-
-const updateProduct = ({
-  product,
-  id,
-}: {
-  product: TProductWithoutId;
-  id?: string;
-}) => {
-  return axios.put(`${API_URL}/api/products/${id}`, product, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
-  });
-};
-
-const createProduct = ({
-  product,
-}: {
-  product: TProductWithoutId;
-  id?: string;
-}) => {
-  return axios.post(`${API_URL}/api/products`, product, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
-  });
-};
-
-const deleteProduct = ({ id }: { id: string }) => {
-  return axios.delete(`${API_URL}/api/products/${id}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
-  });
-};
-
-type TDataMutationFn =
-  | {
-      product: TProductWithoutId;
-      type: "create";
-    }
-  | {
-      product: TProductWithoutId;
-      id: string;
-      type: "update";
-    }
-  | {
-      type: "delete";
-      id: string;
-    };
-
-const mutateData = (data: TDataMutationFn) => {
-  switch (data.type) {
-    case "create":
-      return createProduct({ product: data.product });
-    case "delete":
-      return deleteProduct({ id: data.id });
-    case "update":
-      return updateProduct({ product: data.product, id: data.id });
-  }
-  console.log("Unkown Fetch type");
-};
-
 export default function ProductEditor() {
-  const navigate = useNavigate();
-
-  const [temporaryImageURL, setTemporaryImageURL] = useState("");
   const { selectedProduct } = useDashboard();
-  const revalidator = useRevalidator();
-  const mutation = useMutation(mutateData, {
-    onError(error: AxiosError) {
-      console.log({ ...error, stack: "" });
-    },
-    onSuccess(data) {
-      const responseData = (data.data as TAPIResponse).data;
-      if (isAPIDeleteResponse(responseData)) {
-        navigate("/dashboard/product");
-      }
+  const [temporaryImageURL, setTemporaryImageURL] = useState("");
 
-      revalidator.revalidate();
-    },
-  });
+  // Encapsulates the product editor login into a single custom hook.
+  const { mutation } = useProductEditorMutation();
 
   const {
     register,

@@ -4,6 +4,7 @@ import { Outlet, redirect } from "react-router-dom";
 import { DashboardProvider, useDashboard } from "../Context/DashboardContext";
 import { useMemo } from "react";
 import { convertToRupiah } from "../utils/helper";
+import Button from "../Components/Button";
 
 export const loader = async () => {
   try {
@@ -57,11 +58,18 @@ function Heading() {
   const { userData } = useDashboard();
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 flex items-center justify-between gap-8">
       <h1 className="text-title text-light">
         Welcome,
         <span className="font-semibold text-main"> {userData.name}</span>
-      </h1>
+      </h1>{" "}
+      <Button
+        className="font-body flex items-center justify-center gap-2 hover:text-light"
+        to="/home"
+      >
+        <i className="bx bx-left-arrow-alt text-heading"></i>
+        <p>Back</p>
+      </Button>
     </div>
   );
 }
