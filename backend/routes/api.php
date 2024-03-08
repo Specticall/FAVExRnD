@@ -25,9 +25,15 @@ Route::post('/login', [UserController::class, 'loginUser']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     $obj = $request->user();
-    $obj->role = $obj->role;
 
-    return $obj;
+    return [
+        'name'=>$obj->name,
+        'email'=>$obj->email,
+        'address'=>$obj->address,
+        'phone'=>$obj->phone,
+        'birthdate'=>$obj->birthdate,
+        'role'=>$obj->role
+    ];
 });
 
 Route::get('/products', [ProductController::class, 'getProducts']);
