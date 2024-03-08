@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
@@ -34,3 +35,8 @@ Route::get('/categories', [CategoryController::class, 'getCategories']);
 Route::middleware('auth:sanctum')->post('/categories', [CategoryController::class, 'createCategory']);
 Route::middleware('auth:sanctum')->put('/categories/{id}', [CategoryController::class, 'editCategory']);
 Route::middleware('auth:sanctum')->delete('/categories/{id}', [CategoryController::class, 'deleteCategory']);
+
+Route::middleware('auth:sanctum')->get('/cart', [CartController::class, 'getCart']);
+Route::middleware('auth:sanctum')->post('/cart', [CartController::class, 'addToCart']);
+Route::middleware('auth:sanctum')->put('/cart/{id}', [CartController::class, 'editCartItem']);
+Route::middleware('auth:sanctum')->delete('/cart/{id}', [CartController::class, 'removeFromCart']);
