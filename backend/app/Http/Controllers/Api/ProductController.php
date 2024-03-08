@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -59,7 +61,8 @@ class ProductController extends Controller
                     'img' => 'required',
                     'desc' => 'required',
                     'price' => 'required',
-                    'stock' => 'required'
+                    'stock' => 'required',
+                    'discount' => 'required'
                 ]
             );
 
@@ -78,12 +81,22 @@ class ProductController extends Controller
                 ], 400);
             }
 
+            $extension = explode('/', explode(':', substr($request->img, 0, strpos($request->img, ';')))[1])[1];
+            $replace = substr($request->img, 0, strpos($request->img, ',') + 1);
+
+            $image = str_replace($replace, '', $request->img);
+            $image = str_replace(' ', '+', $image);
+            $imageName = Str::random(10) . '.' . $extension;
+
+            Storage::disk('public')->put($imageName, base64_decode($image));
+
             $product = Product::create([
                 'name' => $request->name,
-                'img' => $request->img,
+                'img' => $imageName,
                 'desc' => $request->desc,
                 'price' => $request->price,
                 'stock' => $request->stock,
+                'discount' => $request->discount,
                 'user_id' => $user->id
             ]);
 
@@ -104,7 +117,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 500,
                 'data' => [
-                    'msg' => "Internal server error!"
+                    'msg' => 'Internal server error!'
                 ]
             ], 500);
         }
@@ -139,10 +152,10 @@ class ProductController extends Controller
                 $request->all(),
                 [
                     'name' => 'required',
-                    'img' => 'required',
                     'desc' => 'required',
                     'price' => 'required',
-                    'stock' => 'required'
+                    'stock' => 'required',
+                    'discount' => 'required|max:1|min:0'
                 ]
             );
 
@@ -159,12 +172,47 @@ class ProductController extends Controller
                 ], 400);
             }
 
+            if ($request->img) {
+                $extension = explode('/', explode(':', substr($request->img, 0, strpos($request->img, ';')))[1])[1];
+                $replace = substr($request->img, 0, strpos($request->img, ',') + 1);
+
+                $image = str_replace($replace, '', $request->img);
+                $image = str_replace(' ', '+', $image);
+                $imageName = Str::random(10) . '.' . $extension;
+
+                Storage::disk('public')->put($imageName, base64_decode($image));
+
+                $product = Product::where('id', '=', $request->route('id'))->update([
+                    'name' => $request->name,
+                    'img' => $imageName,
+                    'desc' => $request->desc,
+                    'price' => $request->price,
+                    'stock' => $request->stock,
+                    'discount' => $request->discount
+                ]);
+
+                $product = Product::where('id', '=', $request->route('id'))->first();
+
+                $product->categories()->detach();
+                $product->categories()->attach($request->categories);
+
+                $product->user;
+                $product->categories;
+
+                return response()->json([
+                    'status' => 200,
+                    'data' => [
+                        'product' => $product
+                    ],
+                ], 200);
+            }
+
             $product = Product::where('id', '=', $request->route('id'))->update([
                 'name' => $request->name,
-                'img' => $request->img,
                 'desc' => $request->desc,
                 'price' => $request->price,
-                'stock' => $request->stock
+                'stock' => $request->stock,
+                'discount' => $request->discount
             ]);
 
             $product = Product::where('id', '=', $request->route('id'))->first();
