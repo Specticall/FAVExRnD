@@ -17,6 +17,7 @@ class Product extends Model
         'desc',
         'price',
         'stock',
+        'discount',
         'user_id'
     ];
 
