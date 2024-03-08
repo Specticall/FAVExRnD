@@ -17,6 +17,7 @@ class ProductController extends Controller
             foreach (Product::all() as $key => $value) {
                 $obj = $value;
                 $obj->user = $value->user;
+                $obj->categories = $value->categories;
 
                 array_push($products, $obj);
             }
@@ -31,7 +32,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 500,
                 'data' => [
-                    'msg' => "Internal server error!"
+                    'msg' => $th->getMessage()
                 ]
             ], 500);
         }
@@ -86,6 +87,13 @@ class ProductController extends Controller
                 'user_id' => $user->id
             ]);
 
+            $product = Product::where('id', '=', $product->id)->first();
+
+            $product->categories()->attach($request->categories);
+
+            $product->user;
+            $product->categories;
+
             return response()->json([
                 'status' => 200,
                 'data' => [
@@ -116,6 +124,17 @@ class ProductController extends Controller
                 ], 401);
             }
 
+            $product = Product::where('id', '=', $request->route('id'))->first();
+
+            if (!$product) {
+                return response()->json([
+                    'status' => 404,
+                    'data' => [
+                        'msg' => 'Product not found!'
+                    ]
+                ], 404);
+            }
+
             $validateProduct = Validator::make(
                 $request->all(),
                 [
@@ -140,17 +159,6 @@ class ProductController extends Controller
                 ], 400);
             }
 
-            $product = Product::where('id', '=', $request->route('id'))->first();
-
-            if (!$product) {
-                return response()->json([
-                    'status' => 404,
-                    'data' => [
-                        'msg' => 'Product not found!'
-                    ]
-                ], 404);
-            }
-
             $product = Product::where('id', '=', $request->route('id'))->update([
                 'name' => $request->name,
                 'img' => $request->img,
@@ -159,17 +167,25 @@ class ProductController extends Controller
                 'stock' => $request->stock
             ]);
 
+            $product = Product::where('id', '=', $request->route('id'))->first();
+
+            $product->categories()->detach();
+            $product->categories()->attach($request->categories);
+
+            $product->user;
+            $product->categories;
+
             return response()->json([
                 'status' => 200,
                 'data' => [
-                    'product' => Product::where('id', '=', $request->route('id'))->first()
+                    'product' => $product
                 ],
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 500,
                 'data' => [
-                    'msg' => 'Internal server error!'
+                    'msg' => $th->getMessage()
                 ]
             ], 500);
         }
@@ -205,7 +221,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 200,
                 'data' => [
-                    'msg' => 'Delete data success'
+                    'msg' => 'Delete product success'
                 ],
             ], 200);
         } catch (\Throwable $th) {
@@ -233,6 +249,9 @@ class ProductController extends Controller
             }
 
             $product = Product::where('id', '=', $request->route('id'))->first();
+
+            $product->user;
+            $product->categories;
 
             return response()->json([
                 'status' => 200,

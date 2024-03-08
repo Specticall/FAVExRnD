@@ -14,6 +14,9 @@ class UserController extends Controller
     public function createUser(Request $request)
     {
         try {
+            $users = User::all();
+            $count = count($users);
+
             $validateUser = Validator::make(
                 $request->all(),
                 [
@@ -48,13 +51,15 @@ class UserController extends Controller
                 'phone' => $request->phone,
                 'birthdate' => $request->birthdate,
                 'password' => Hash::make($request->password),
-                'role' => "Basic"
+                'role' => ($count < 1) ? "Admin" : "Basic"
             ]);
 
             return response()->json([
                 'status' => 200,
                 'data' => [
-                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                    'token' => $user->createToken("API TOKEN")->plainTextToken,
+                    'name' => $user->name,
+                    'role' => $user->role
                 ],
             ], 200);
         } catch (\Throwable $th) {
@@ -101,7 +106,9 @@ class UserController extends Controller
             return response()->json([
                 'status' => 200,
                 'data' => [
-                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                    'token' => $user->createToken("API TOKEN")->plainTextToken,
+                    'name' => $user->name,
+                    'role' => $user->role
                 ]
             ], 200);
         } catch (\Throwable $th) {
