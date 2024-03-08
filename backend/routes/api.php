@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\WishlistController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +24,10 @@ Route::post('/register', [UserController::class, 'createUser']);
 Route::post('/login', [UserController::class, 'loginUser']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    $obj = $request->user();
+    $obj->role = $obj->role;
+
+    return $obj;
 });
 
 Route::get('/products', [ProductController::class, 'getProducts']);
@@ -40,3 +45,7 @@ Route::middleware('auth:sanctum')->get('/cart', [CartController::class, 'getCart
 Route::middleware('auth:sanctum')->post('/cart', [CartController::class, 'addToCart']);
 Route::middleware('auth:sanctum')->put('/cart/{id}', [CartController::class, 'editCartItem']);
 Route::middleware('auth:sanctum')->delete('/cart/{id}', [CartController::class, 'removeFromCart']);
+
+Route::middleware('auth:sanctum')->get('/wishlist', [WishlistController::class, 'getWishlist']);
+Route::middleware('auth:sanctum')->post('/wishlist', [WishlistController::class, 'addWishlist']);
+Route::middleware('auth:sanctum')->delete('/wishlist/{id}', [WishlistController::class, 'removeWishlist']);
