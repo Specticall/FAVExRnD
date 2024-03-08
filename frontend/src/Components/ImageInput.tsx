@@ -1,6 +1,10 @@
 import { ChangeEvent, useRef, useState } from "react";
 
-export default function ImageInput() {
+export default function ImageInput({
+  onChange,
+}: {
+  onChange: (imageURL: string) => void;
+}) {
   const [temporaryImageURL, setTemporayImageURL] = useState("");
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -14,6 +18,7 @@ export default function ImageInput() {
     const imageBlob = e.target.files[0];
     const imageURL = URL.createObjectURL(imageBlob);
     setTemporayImageURL(imageURL);
+    onChange(imageURL);
   };
 
   return (

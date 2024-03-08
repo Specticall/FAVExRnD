@@ -16,7 +16,7 @@ export function HeroBG() {
 }
 
 export function Hero({ username }: { username: string | undefined }) {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = username ? true : false;
 
   return (
     <section id="#hero" className="pt-40 mx-auto max-w-[70rem] text-center">

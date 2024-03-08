@@ -9,6 +9,8 @@ import {
 type TAuthContextValues = {
   isAuthenticated: boolean;
   logoutUser: () => void;
+  setRole: React.Dispatch<React.SetStateAction<"Basic" | "Admin">>;
+  role: "Basic" | "Admin";
 };
 type Props = {
   children: ReactNode;
@@ -19,12 +21,13 @@ const AuthContext = createContext<TAuthContextValues | null>(null);
 export function AuthProvider({ children }: Props) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState<null | string>(null);
+  const [role, setRole] = useState<"Basic" | "Admin">("Basic");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setToken(token);
     setIsAuthenticated(token ? true : false);
-  }, []);
+  }, [token, role]);
 
   const logoutUser = () => {
     localStorage.removeItem("token");
@@ -33,7 +36,9 @@ export function AuthProvider({ children }: Props) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, logoutUser }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, logoutUser, setRole, role }}
+    >
       {children}
     </AuthContext.Provider>
   );

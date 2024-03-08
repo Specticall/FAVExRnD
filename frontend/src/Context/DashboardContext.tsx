@@ -7,6 +7,8 @@ type TDashboardContextValues = {
   productData: (TProduct & { user: TUserData })[];
   productFiltered: (TProduct & { user: TUserData })[];
   setProductSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  selectProductById: (id: string) => void;
+  selectedProduct: (TProduct & { user: TUserData }) | undefined;
 };
 
 const DashboardContext = createContext<TDashboardContextValues | null>(null);
@@ -17,6 +19,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     productData: (TProduct & { user: TUserData })[];
   };
   const [productSearchQuery, setProductSearchQuery] = useState("");
+
+  const [selectedProduct, setSelectedProduct] = useState<
+    (TProduct & { user: TUserData }) | undefined
+  >();
+
+  const selectProductById = (id: string) => {
+    setSelectedProduct(productData.find((product) => product.id === id));
+  };
 
   // Returns product with filters applied (e.g. search, sort, etc..)
   const productFiltered = useMemo(
@@ -32,7 +42,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   return (
     <DashboardContext.Provider
-      value={{ userData, productData, productFiltered, setProductSearchQuery }}
+      value={{
+        userData,
+        productData,
+        productFiltered,
+        setProductSearchQuery,
+        selectProductById,
+        selectedProduct,
+      }}
     >
       {children}
     </DashboardContext.Provider>

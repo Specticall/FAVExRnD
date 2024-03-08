@@ -7,6 +7,7 @@ import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import { APIError, API_URL } from "../Services/API";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 type TLoginFields = {
   email: string;
@@ -17,6 +18,8 @@ type TAPILoginResponse = {
   status: number;
   data: {
     token: string;
+    role: "Basic" | "Admin";
+    name: string;
   };
 };
 
@@ -26,6 +29,7 @@ const loginUser = (data: TLoginFields) => {
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setRole } = useAuth();
   const {
     register,
     handleSubmit,
@@ -48,8 +52,14 @@ export default function Login() {
       }
     },
     onSuccess: (data) => {
-      const token = (data.data as TAPILoginResponse).data.token;
+      const loginData = data.data as TAPILoginResponse;
+      const token = loginData.data.token;
+      const role = loginData.data.role;
+
       localStorage.setItem("token", token);
+
+      setRole(role);
+
       navigate("/home");
     },
   });

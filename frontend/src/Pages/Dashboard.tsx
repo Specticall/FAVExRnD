@@ -31,10 +31,10 @@ export const loader = async () => {
         return data;
       }, {});
 
-    type TODO = any;
     console.log(
       "EVERY USER CAN STILL LOG IN, ADMIN ROLE SPECIFICATION NOT YET ADDED"
     );
+    console.log(data);
     return data;
   } catch (err) {
     return redirect("/home");
@@ -67,7 +67,7 @@ function Heading() {
 }
 
 function Statistics() {
-  const { productData, userData } = useDashboard();
+  const { productData } = useDashboard();
   const statistics = useMemo(
     () => [
       {
@@ -80,7 +80,7 @@ function Statistics() {
       },
       {
         title: "Most Recent Product",
-        content: productData[productData.length - 1].name || "No Products Yet",
+        content: productData[productData.length - 1]?.name || "No Products Yet",
         style: { backgroundColor: "#392A2A", color: "white" },
       },
       {
@@ -89,7 +89,7 @@ function Statistics() {
         style: { backgroundColor: "#6F6758", color: "white" },
       },
     ],
-    [productData, userData.name]
+    [productData]
   );
 
   return (

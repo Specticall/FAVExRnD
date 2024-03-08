@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Dashboard, { loader as dashboardLoader } from "./Pages/Dashboard";
 import { ProductBoard } from "./Components/ProductBoard";
 import ProductEditor from "./Components/ProductEditor";
+import { AuthProvider } from "./Context/AuthContext";
 
 const router = createBrowserRouter([
   {
@@ -56,7 +57,9 @@ const queryClient = new QueryClient();
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

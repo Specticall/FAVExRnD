@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useDashboard } from "../Context/DashboardContext";
 import { convertToRupiah } from "../utils/helper";
 import Button from "./Button";
@@ -32,7 +33,8 @@ function ProductNavbar() {
 }
 
 export function ProductBoard() {
-  const { productFiltered } = useDashboard();
+  const { productFiltered, selectProductById } = useDashboard();
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -41,6 +43,11 @@ export function ProductBoard() {
         {productFiltered.length > 0 ? (
           <Swiper slidesPerView={4} spaceBetween={32}>
             {productFiltered.map((product) => {
+              const handleSelect = () => {
+                selectProductById(product.id);
+                navigate("/dashboard/modify");
+              };
+
               return (
                 <SwiperSlide className="h-[39rem] flex flex-col">
                   <img src={`/${product.img}`} alt="" />
@@ -54,7 +61,10 @@ export function ProductBoard() {
                   <p className="text-light/80 mb-8 text-small">
                     {product.desc}
                   </p>
-                  <Button className="bg-main py-3 px-4 w-full text-body text-small rounded-md hover:bg-light mt-auto justify-self-end">
+                  <Button
+                    onClick={handleSelect}
+                    className="bg-main py-3 px-4 w-full text-body text-small rounded-md hover:bg-light mt-auto justify-self-end"
+                  >
                     Edit Product
                   </Button>
                 </SwiperSlide>

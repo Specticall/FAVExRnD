@@ -2,6 +2,7 @@ import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
 import Button from "./Button";
 import { useAuth } from "../Context/AuthContext";
+import { useRevalidator } from "react-router-dom";
 
 const navbarItem = [
   { name: "Men" },
@@ -13,12 +14,13 @@ const navbarItem = [
 type Props = {
   // Used so that the intersection observer can observer the hero element (used for scroll reveal);
   gapRef: MutableRefObject<HTMLElement | null>;
+  role?: "Admin" | "Basic";
 };
 
-export function Navbar({ gapRef }: Props) {
-  const { isAuthenticated, logoutUser } = useAuth();
+export function Navbar({ gapRef, role }: Props) {
+  const isAuthenticated = role ? true : false;
   const [showBackground, setShowBackground] = useState(false);
-
+  const revalidator = useRevalidator();
   // Reveals navbar background when the viewport "leaves" the top div element
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,6 +41,11 @@ export function Navbar({ gapRef }: Props) {
       observer.disconnect();
     };
   }, [gapRef]);
+
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    revalidator.revalidate();
+  };
 
   return (
     <nav
@@ -66,7 +73,7 @@ export function Navbar({ gapRef }: Props) {
           )}
           <li>Wishlist</li>
           <li>Cart</li>
-          {isAuthenticated && (
+          {isAuthenticated && role === "Admin" && (
             <li className="bg-main px-4 py-2 text-body rounded-md hover:bg-light [&:hover>button]:text-body">
               <Button to="/dashboard">Dashboard</Button>
             </li>

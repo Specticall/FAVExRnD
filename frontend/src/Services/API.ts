@@ -68,6 +68,7 @@ export type TUserData = {
   phone: string;
   birthData: string;
   id: string;
+  role: "Admin" | "Basic";
 };
 export const productType = [
   "Sweatshirts",

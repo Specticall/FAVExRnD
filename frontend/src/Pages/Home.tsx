@@ -18,24 +18,23 @@ export const loader = async () => {
       Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
     },
   });
-  return userData.data;
+  return userData.status === 200 ? { ...userData.data, role: "Admin" } : null;
 };
 
 export default function Home() {
   const userData = useLoaderData() as TUserData | undefined;
-  console.log(userData);
   const gapRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <AuthProvider>
+    <>
       <div className="h-4" ref={gapRef}></div>
       <main className="">
-        <Navbar gapRef={gapRef} />
+        <Navbar gapRef={gapRef} role={userData?.role} />
         <Hero username={userData?.name} />
         <HeroBG />
         <Products />
         <Footer />
       </main>
-    </AuthProvider>
+    </>
   );
 }

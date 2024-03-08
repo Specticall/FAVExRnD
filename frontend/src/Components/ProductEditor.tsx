@@ -2,9 +2,14 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Button from "./Button";
 import { TextInput } from "./TextInput";
 import MultiDropdownInput from "./MultiDropdownInput";
-import { productType } from "../Services/API";
+import { API_URL, TProduct, productType } from "../Services/API";
 import Counter from "./Counter";
 import ImageInput from "./ImageInput";
+import { useDashboard } from "../Context/DashboardContext";
+import { useMutation } from "react-query";
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import { convertImageToBase64 } from "../utils/helper";
 
 function ProductNavbar() {
   return (
@@ -32,19 +37,72 @@ type TProductProperties = {
   category: string[];
 };
 
+type TProductWithoutId = Omit<TProduct, "id">;
+
+const updateProduct = ({
+  product,
+  id,
+}: {
+  product: TProductWithoutId;
+  id?: string;
+}) => {
+  console.log(localStorage.getItem("token") || "");
+  return axios.put(`${API_URL}/api/products/${id}`, product, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+    },
+  });
+};
+
+const createProduct = ({
+  product,
+}: {
+  product: TProductWithoutId;
+  id?: string;
+}) => {
+  return axios.post(`${API_URL}/api/products/`, product, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+    },
+  });
+};
+
 export default function ProductEditor() {
+  const [temporaryImageURL, setTemporaryImageURL] = useState("");
+  const { selectedProduct } = useDashboard();
+  const mutation = useMutation(
+    selectedProduct?.id ? updateProduct : createProduct,
+    {
+      onError(error: AxiosError) {
+        console.log({ ...error, stack: "" });
+      },
+      onSuccess(data) {
+        console.log(data);
+      },
+    }
+  );
+
   const { register, handleSubmit, control } = useForm<TProductProperties>({
     defaultValues: {
-      name: "",
-      desc: "",
-      price: 0,
-      stock: 0,
-      category: [],
+      name: selectedProduct?.name || "",
+      desc: selectedProduct?.desc || "",
+      price: selectedProduct?.price || 0,
+      stock: selectedProduct?.stock || 0,
+      category: selectedProduct?.category || [],
     },
   });
 
-  const onSubmit: SubmitHandler<TProductProperties> = (value) => {
-    console.log(value);
+  const onSubmit: SubmitHandler<TProductProperties> = async (value) => {
+    // Checks if the posted product is an update or a creation
+    const base64Image = await convertImageToBase64(temporaryImageURL);
+    const newValue = {
+      ...value,
+      img: base64Image,
+      discount: 0,
+    };
+
+    // console.log(newValue);
+    mutation.mutate({ product: newValue, id: selectedProduct?.id });
   };
 
   return (
@@ -54,7 +112,7 @@ export default function ProductEditor() {
         onSubmit={handleSubmit(onSubmit)}
         className=" mt-8 p-8 rounded-lg bg-[#FFFCFA] min-h-[35rem] h-[40rem] grid grid-cols-[22.5rem_1fr] gap-10"
       >
-        <ImageInput />
+        <ImageInput onChange={(imageURL) => setTemporaryImageURL(imageURL)} />
         <div className="grid">
           <div>
             <h2 className="mb-6 text-title font-semibold text-main ">
@@ -106,8 +164,8 @@ export default function ProductEditor() {
                 <Controller
                   name="stock"
                   control={control}
-                  render={({ field: { onChange } }) => (
-                    <Counter onChange={onChange} />
+                  render={({ field: { onChange, value } }) => (
+                    <Counter onChange={onChange} defaultValue={value} />
                   )}
                 />
               </div>
