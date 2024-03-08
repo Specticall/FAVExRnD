@@ -2,12 +2,25 @@ import { HTMLInputTypeAttribute, ReactElement, forwardRef } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
 import { register } from "swiper/element";
 
+const styleList = {
+  underline: {
+    input: "border-b-[2px]",
+    label: "",
+  },
+  boxed: {
+    input: "border-[1.5px] rounded-md px-5 [&&]:py-2 mt-2",
+    label: "text-lighter text-small",
+  },
+};
+
 type TTextInput<T extends FieldValues = FieldValues> = {
   placeholder: string;
-  formLabel: string;
+  formLabel?: string;
   type?: HTMLInputTypeAttribute;
   errorMessage?: string;
   icon?: ReactElement;
+  className?: string;
+  style?: keyof typeof styleList;
 } & Partial<ReturnType<UseFormRegister<T>>>;
 export const TextInput = forwardRef<HTMLInputElement, TTextInput>(
   (
@@ -21,16 +34,20 @@ export const TextInput = forwardRef<HTMLInputElement, TTextInput>(
       onChange,
       onBlur,
       name,
+      className,
+      style = "underline",
     },
     ref
   ) => {
     return (
       <div className="flex flex-col items-start">
-        <label className="font-body">{formLabel}</label>
+        <label className={`font-body ${styleList[style].label}`}>
+          {formLabel}
+        </label>
         <div className="w-full relative">
           <input
             type={type}
-            className="py-3 w-full bg-transparent border-b-[2px] text-main border-main outline-none focus:border-light font-body placeholder:tracking-wide placeholder:text-light/50"
+            className={`${styleList[style].input} ${className} py-3 w-full bg-transparent text-main border-main outline-none focus:border-light font-body placeholder:tracking-wide placeholder:text-light/50`}
             style={errorMessage ? { borderColor: "#CC2A06" } : undefined}
             placeholder={placeholder}
             {...register}

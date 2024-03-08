@@ -1,16 +1,6 @@
 import { useState } from "react";
 import ProductList from "./ProductList";
-
-const productType = [
-  "All",
-  "Sweatshirts",
-  "Knitwear",
-  "Polo Shirts",
-  "T-shirt",
-  "Shirts",
-  "Trousers",
-  "Hats",
-] as const;
+import { productType } from "../Services/API";
 
 type TProductType = (typeof productType)[number];
 const selectedStyle = { background: "#392A2A", color: "#F9F1E9" };
