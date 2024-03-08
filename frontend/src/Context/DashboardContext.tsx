@@ -24,8 +24,12 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     (TProduct & { user: TUserData }) | undefined
   >();
 
-  const selectProductById = (id: string) => {
-    setSelectedProduct(productData.find((product) => product.id === id));
+  const selectProductById = (id: string | null) => {
+    if (id) {
+      setSelectedProduct(productData.find((product) => product.id === id));
+    } else {
+      setSelectedProduct(undefined);
+    }
   };
 
   // Returns product with filters applied (e.g. search, sort, etc..)

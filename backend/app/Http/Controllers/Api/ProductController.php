@@ -117,7 +117,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 500,
                 'data' => [
-                    'msg' => 'Internal server error!'
+                    'msg' => $th->getMessage()
                 ]
             ], 500);
         }

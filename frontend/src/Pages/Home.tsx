@@ -3,27 +3,34 @@ import { Navbar } from "../Components/Navbar";
 import { Hero, HeroBG } from "./Hero";
 import { Products } from "../Components/Products";
 import { Footer } from "../Components/Footer";
-import { AuthProvider } from "../Context/AuthContext";
 import { API_URL, TUserData } from "../Services/API";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
 
 export const loader = async () => {
-  // Return if no token exist.
-  if (!localStorage.getItem("token")) return null;
+  try {
+    // Return if no token exist.
+    if (!localStorage.getItem("token")) return null;
 
-  // Fetch user data on load.
-  const userData = await axios.get(`${API_URL}/api/user`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-    },
-  });
-  return userData.status === 200 ? { ...userData.data, role: "Admin" } : null;
+    // Fetch user data on load.
+    const userData = await axios.get(`${API_URL}/api/user`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    });
+
+    // USER DATA GA KELUAR ROLE
+    return { ...userData.data, role: "Admin" };
+  } catch (err) {
+    return null;
+  }
 };
 
 export default function Home() {
   const userData = useLoaderData() as TUserData | undefined;
   const gapRef = useRef<HTMLDivElement | null>(null);
+
+  console.log(userData);
 
   return (
     <>

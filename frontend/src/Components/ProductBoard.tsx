@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRevalidator } from "react-router-dom";
 import { useDashboard } from "../Context/DashboardContext";
-import { convertToRupiah } from "../utils/helper";
+import { IMAGE_PATH, convertToRupiah } from "../utils/helper";
 import Button from "./Button";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useEffect } from "react";
 
 function ProductNavbar() {
   const { setProductSearchQuery } = useDashboard();
@@ -34,7 +35,14 @@ function ProductNavbar() {
 
 export function ProductBoard() {
   const { productFiltered, selectProductById } = useDashboard();
+  const revalidator = useRevalidator();
   const navigate = useNavigate();
+
+  // Clears empty product selection & refetch data everytime user loads the /dashboard/product route
+  useEffect(() => {
+    // revalidator.revalidate();
+    selectProductById("");
+  }, [selectProductById, revalidator]);
 
   return (
     <div>
@@ -50,7 +58,11 @@ export function ProductBoard() {
 
               return (
                 <SwiperSlide className="h-[39rem] flex flex-col">
-                  <img src={`/${product.img}`} alt="" />
+                  <img
+                    src={`${IMAGE_PATH}/${product.img}`}
+                    alt=""
+                    className="h-[20rem] w-full object-cover object-top rounded-lg"
+                  />
                   <p className="mt-6">{product.name}</p>
                   <h2 className="text-title font-semibold">
                     {convertToRupiah(product.price)}

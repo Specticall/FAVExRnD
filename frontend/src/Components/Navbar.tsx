@@ -1,7 +1,6 @@
 import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
 import Button from "./Button";
-import { useAuth } from "../Context/AuthContext";
 import { useRevalidator } from "react-router-dom";
 
 const navbarItem = [

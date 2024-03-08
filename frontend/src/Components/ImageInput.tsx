@@ -1,8 +1,11 @@
 import { ChangeEvent, useRef, useState } from "react";
+import { IMAGE_PATH } from "../utils/helper";
 
 export default function ImageInput({
+  imageName,
   onChange,
 }: {
+  imageName: string | undefined;
   onChange: (imageURL: string) => void;
 }) {
   const [temporaryImageURL, setTemporayImageURL] = useState("");
@@ -20,6 +23,9 @@ export default function ImageInput({
     setTemporayImageURL(imageURL);
     onChange(imageURL);
   };
+  const imageFromStorage = imageName && `${IMAGE_PATH}/${imageName}`;
+
+  const imageSource = temporaryImageURL || imageFromStorage;
 
   return (
     <div
@@ -38,10 +44,17 @@ export default function ImageInput({
         accept=".png, .jpg, .jpeg"
         onChange={onChangeImage}
       />
-      <img
-        src={temporaryImageURL || "/assets/products/image 1-1.png"}
-        className="h-full w-full object-cover rounded-md max-w-[100%] min-h-0 block min-w-0 "
-      />
+      {imageSource ? (
+        <img
+          src={temporaryImageURL || imageFromStorage}
+          className="h-full w-full object-cover rounded-md max-w-[100%] min-h-0 block min-w-0 "
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center text-medium h-full bg-light/60 gap-2">
+          <i className="bx bx-camera text-white text-large"></i>
+          <p className="text-white">Add Image</p>
+        </div>
+      )}
       {/* </div> */}
     </div>
   );

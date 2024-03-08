@@ -2,14 +2,15 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Button from "./Button";
 import { TextInput } from "./TextInput";
 import MultiDropdownInput from "./MultiDropdownInput";
-import { API_URL, TProduct, productType } from "../Services/API";
+import { API_URL, TAPIResponse, TProduct, productType } from "../Services/API";
 import Counter from "./Counter";
 import ImageInput from "./ImageInput";
 import { useDashboard } from "../Context/DashboardContext";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
-import { convertImageToBase64 } from "../utils/helper";
+import { convertImageToBase64, isAPIDeleteResponse } from "../utils/helper";
+import { redirect, useNavigate, useRevalidator } from "react-router-dom";
 
 function ProductNavbar() {
   return (
@@ -34,7 +35,7 @@ type TProductProperties = {
   desc: string;
   price: number;
   stock: number;
-  category: string[];
+  categories: string[];
 };
 
 type TProductWithoutId = Omit<TProduct, "id">;
@@ -46,7 +47,6 @@ const updateProduct = ({
   product: TProductWithoutId;
   id?: string;
 }) => {
-  console.log(localStorage.getItem("token") || "");
   return axios.put(`${API_URL}/api/products/${id}`, product, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
@@ -60,49 +60,107 @@ const createProduct = ({
   product: TProductWithoutId;
   id?: string;
 }) => {
-  return axios.post(`${API_URL}/api/products/`, product, {
+  return axios.post(`${API_URL}/api/products`, product, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
     },
   });
 };
 
+const deleteProduct = ({ id }: { id: string }) => {
+  return axios.delete(`${API_URL}/api/products/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+    },
+  });
+};
+
+type TDataMutationFn =
+  | {
+      product: TProductWithoutId;
+      type: "create";
+    }
+  | {
+      product: TProductWithoutId;
+      id: string;
+      type: "update";
+    }
+  | {
+      type: "delete";
+      id: string;
+    };
+
+const mutateData = (data: TDataMutationFn) => {
+  switch (data.type) {
+    case "create":
+      return createProduct({ product: data.product });
+    case "delete":
+      return deleteProduct({ id: data.id });
+    case "update":
+      return updateProduct({ product: data.product, id: data.id });
+  }
+  console.log("Unkown Fetch type");
+};
+
 export default function ProductEditor() {
+  const navigate = useNavigate();
+
   const [temporaryImageURL, setTemporaryImageURL] = useState("");
   const { selectedProduct } = useDashboard();
-  const mutation = useMutation(
-    selectedProduct?.id ? updateProduct : createProduct,
-    {
-      onError(error: AxiosError) {
-        console.log({ ...error, stack: "" });
-      },
-      onSuccess(data) {
-        console.log(data);
-      },
-    }
-  );
+  const revalidator = useRevalidator();
+  const mutation = useMutation(mutateData, {
+    onError(error: AxiosError) {
+      console.log({ ...error, stack: "" });
+    },
+    onSuccess(data) {
+      const responseData = (data.data as TAPIResponse).data;
+      if (isAPIDeleteResponse(responseData)) {
+        navigate("/dashboard/product");
+      }
 
-  const { register, handleSubmit, control } = useForm<TProductProperties>({
+      revalidator.revalidate();
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<TProductProperties>({
     defaultValues: {
       name: selectedProduct?.name || "",
       desc: selectedProduct?.desc || "",
-      price: selectedProduct?.price || 0,
+      price: selectedProduct?.price,
       stock: selectedProduct?.stock || 0,
-      category: selectedProduct?.category || [],
+      categories: selectedProduct?.categories || [],
     },
   });
 
   const onSubmit: SubmitHandler<TProductProperties> = async (value) => {
     // Checks if the posted product is an update or a creation
-    const base64Image = await convertImageToBase64(temporaryImageURL);
+    const base64Image = temporaryImageURL
+      ? await convertImageToBase64(temporaryImageURL)
+      : "";
     const newValue = {
       ...value,
       img: base64Image,
+      price: Number(value.price),
       discount: 0,
     };
+    const id = selectedProduct?.id;
 
-    // console.log(newValue);
-    mutation.mutate({ product: newValue, id: selectedProduct?.id });
+    // If an id for a product exist means we're updating.
+    if (id) {
+      mutation.mutate({ product: newValue, id, type: "update" });
+    } else {
+      mutation.mutate({ product: newValue, type: "create" });
+    }
+  };
+
+  const handleDelete = () => {
+    if (!selectedProduct) return;
+    mutation.mutate({ type: "delete", id: selectedProduct.id });
   };
 
   return (
@@ -112,39 +170,66 @@ export default function ProductEditor() {
         onSubmit={handleSubmit(onSubmit)}
         className=" mt-8 p-8 rounded-lg bg-[#FFFCFA] min-h-[35rem] h-[40rem] grid grid-cols-[22.5rem_1fr] gap-10"
       >
-        <ImageInput onChange={(imageURL) => setTemporaryImageURL(imageURL)} />
+        <ImageInput
+          onChange={(imageURL) => setTemporaryImageURL(imageURL)}
+          imageName={selectedProduct?.img}
+        />
         <div className="grid">
           <div>
-            <h2 className="mb-6 text-title font-semibold text-main ">
-              Add Products
-            </h2>
+            <div className="flex mb-6 items-center justify-between">
+              <h2 className=" text-title font-semibold text-main ">
+                Add Products
+              </h2>
+              {selectedProduct?.id && (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDelete();
+                  }}
+                >
+                  <i className="bx bx-trash text-title hover:text-danger text-light/50 cursor-pointer"></i>
+                </Button>
+              )}
+            </div>
             <div className="flex gap-8 [&>*]:w-full">
               <TextInput
                 placeholder="Product Name"
-                {...register("name")}
+                {...register("name", { required: "Field can't be empty" })}
                 formLabel="Product Name"
                 style="boxed"
+                errorMessage={errors.name?.message}
               />
               <TextInput
                 placeholder="Product Price"
-                {...register("price")}
+                {...register("price", {
+                  required: "Field can't be empty",
+                  valueAsNumber: true,
+                })}
+                type="number"
                 formLabel="Product Price"
                 style="boxed"
+                errorMessage={errors.price?.message}
               />
             </div>
             <div className="mt-4">
               <label className="text-small text-lighter ">Description</label>
               <textarea
-                {...register("desc")}
+                {...register("desc", { required: "Field can't be empty" })}
                 className="resize-none border-[1.5px] border-main mt-2 rounded-md w-full bg-transparent min-h-[6.5rem] placeholder:text-light/50 text px-4 py-3 text-main outline-none"
                 placeholder="Stylish graphic t-shirt, featuring a unique design that..."
+                style={errors.desc ? { borderColor: "#CC2A06" } : undefined}
               ></textarea>
+              {errors.desc && (
+                <p className="text-danger text-small mt-2">
+                  {errors.desc?.message}
+                </p>
+              )}
             </div>
             <div className="mt-4 grid grid-cols-2 place-items-start gap-8 [&>*]:w-full">
               <div className="grid gap-2">
-                <label className="text-small text-lighter">Category</label>
+                <label className="text-small text-lighter">categories</label>
                 <Controller
-                  name="category"
+                  name="categories"
                   control={control}
                   render={({ field: { onChange } }) => {
                     return (

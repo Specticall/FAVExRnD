@@ -5,7 +5,7 @@ export type TProduct = {
   desc: string;
   price: number;
   stock: number;
-  category: string[];
+  categories: string[];
   discount?: number;
 };
 
@@ -19,7 +19,7 @@ export const productList: TProduct[] = [
     desc: "A classic polo shirt made from premium cotton.",
     price: 599000,
     stock: 20,
-    category: ["Polo Shirts", "Men"],
+    categories: ["Polo Shirts", "Men"],
     discount: 0.75,
   },
   {
@@ -29,7 +29,7 @@ export const productList: TProduct[] = [
     desc: "Casual trousers perfect for both work and play.",
     price: 1399000,
     stock: 15,
-    category: ["Trousers", "Men"],
+    categories: ["Trousers", "Men"],
   },
   {
     id: "3",
@@ -38,7 +38,7 @@ export const productList: TProduct[] = [
     desc: "A warm, knitted sweater for cold days.",
     price: 899000,
     stock: 10,
-    category: ["Knitwear", "Women"],
+    categories: ["Knitwear", "Women"],
   },
   {
     id: "4",
@@ -47,7 +47,7 @@ export const productList: TProduct[] = [
     desc: "A stylish hat to complete your outfit.",
     price: 899000,
     stock: 30,
-    category: ["Hats", "Unisex"],
+    categories: ["Hats", "Unisex"],
   },
   {
     id: "5",
@@ -56,7 +56,7 @@ export const productList: TProduct[] = [
     desc: "A stylish hat to complete your outfit.",
     price: 899000,
     stock: 30,
-    category: ["Hats", "Unisex"],
+    categories: ["Hats", "Unisex"],
   },
 ];
 export const API_URL = "http://127.0.0.1:8000";
@@ -70,6 +70,7 @@ export type TUserData = {
   id: string;
   role: "Admin" | "Basic";
 };
+export type TAPIResponse = { status: number; data: unknown };
 export const productType = [
   "Sweatshirts",
   "Knitwear",

@@ -1,4 +1,8 @@
+import { API_URL } from "../Services/API";
+
 export type RemoveReadonly<T> = { -readonly [P in keyof T]: T[P] };
+
+export const IMAGE_PATH = `${API_URL}/storage`;
 
 export function isNumber(str: string) {
   return /^\d+$/.test(str);
@@ -16,7 +20,7 @@ export function convertImageToBase64(imgUrl: string): Promise<string> {
       ctx?.drawImage(image, 0, 0);
       const dataUrl = canvas.toDataURL();
 
-      resolve(dataUrl.replace("data:", "").replace(/^.+,/, ""));
+      resolve(dataUrl);
     };
     image.onerror = (error) => {
       reject(error);
@@ -35,4 +39,14 @@ export function convertToRupiah(price: number) {
 export function isAuthenticated() {
   const token = localStorage.getItem("token");
   return token ? true : false;
+}
+
+export function isAPIDeleteResponse(responseData: unknown) {
+  return (
+    responseData &&
+    typeof responseData === "object" &&
+    "msg" in responseData &&
+    typeof responseData.msg === "string" &&
+    responseData.msg.includes("Delete")
+  );
 }
