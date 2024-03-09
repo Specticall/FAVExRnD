@@ -19,6 +19,8 @@ export const loader = async () => {
       },
     });
 
+    console.log(userData.data);
+
     // USER DATA GA KELUAR ROLE
     return { ...userData.data, role: "Admin" };
   } catch (err) {
@@ -29,8 +31,6 @@ export const loader = async () => {
 export default function Home() {
   const userData = useLoaderData() as TUserData | undefined;
   const gapRef = useRef<HTMLDivElement | null>(null);
-
-  console.log(userData);
 
   return (
     <>
