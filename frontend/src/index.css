@@ -7,6 +7,10 @@ body {
   background-color: #f9f1e9;
 }
 
+#root {
+  position: relative;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

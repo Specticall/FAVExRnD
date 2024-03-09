@@ -3,21 +3,29 @@ import { TProduct, TUserData } from "../Services/API";
 import { useLoaderData } from "react-router-dom";
 
 type TDashboardContextValues = {
-  userData: TUserData;
-  productData: (TProduct & { user: TUserData })[];
-  productFiltered: (TProduct & { user: TUserData })[];
+  userData?: TUserData;
+  productData?: (TProduct & { user: TUserData })[];
+  categoryData?: TCategory[];
+  productFiltered?: (TProduct & { user: TUserData })[];
   setProductSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   selectProductById: (id: string) => void;
   selectedProduct: (TProduct & { user: TUserData }) | undefined;
 };
 
+export type TCategory = {
+  label: string;
+  id: number;
+};
+
 const DashboardContext = createContext<TDashboardContextValues | null>(null);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const { userData, productData } = useLoaderData() as {
-    userData: TUserData;
-    productData: (TProduct & { user: TUserData })[];
+  const { userData, productData, categoryData } = useLoaderData() as {
+    userData?: TUserData;
+    productData?: (TProduct & { user: TUserData })[];
+    categoryData?: TCategory[];
   };
+
   const [productSearchQuery, setProductSearchQuery] = useState("");
 
   const [selectedProduct, setSelectedProduct] = useState<
@@ -26,7 +34,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const selectProductById = (id: string | null) => {
     if (id) {
-      setSelectedProduct(productData.find((product) => product.id === id));
+      setSelectedProduct(productData?.find((product) => product.id === id));
     } else {
       setSelectedProduct(undefined);
     }
@@ -35,7 +43,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   // Returns product with filters applied (e.g. search, sort, etc..)
   const productFiltered = useMemo(
     () =>
-      productData.filter((product) =>
+      productData?.filter((product) =>
         // SEARCH FILTER
         product.name
           .toLocaleLowerCase()
@@ -49,6 +57,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       value={{
         userData,
         productData,
+        categoryData,
         productFiltered,
         setProductSearchQuery,
         selectProductById,

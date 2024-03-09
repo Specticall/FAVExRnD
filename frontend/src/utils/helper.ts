@@ -8,6 +8,12 @@ export function isNumber(str: string) {
   return /^\d+$/.test(str);
 }
 
+export const AUTH_HEADER = {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+  },
+};
+
 export function convertImageToBase64(imgUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const image = new Image();

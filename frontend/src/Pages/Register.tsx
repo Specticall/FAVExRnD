@@ -6,6 +6,7 @@ import { TextInput } from "../Components/TextInput";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import { API_URL, APIError } from "../Services/API";
+import { useNavigate } from "react-router-dom";
 
 type TRegisterFields = {
   name: string;
@@ -65,10 +66,11 @@ export default function Register() {
     setError,
     formState: { errors },
   } = useForm<TRegisterFields>();
+  const navigate = useNavigate();
 
   const mutation = useMutation(registerUser, {
     onError: (error: AxiosError) => {
-      const errorData = (error.response?.data as APIError).data;
+      const errorData = (error.response?.data as APIError).data.msg;
 
       if (!Array.isArray(errorData)) {
         console.log("Error is not an array????");
@@ -83,13 +85,13 @@ export default function Register() {
         });
       });
     },
-    onSuccess: () => {
-      console.log("success");
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.data.data.token);
+      navigate("/home");
     },
   });
 
   const onSubmit: SubmitHandler<TRegisterFields> = (value) => {
-    console.log(value);
     mutation.mutate(value);
   };
 

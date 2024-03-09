@@ -2,8 +2,10 @@ import { useMutation } from "react-query";
 import { isAPIDeleteResponse } from "../utils/helper";
 import { useNavigate, useRevalidator } from "react-router-dom";
 import axios, { AxiosError } from "axios";
-import { API_URL, TAPIResponse, TProduct } from "../Services/API";
-type TProductWithoutId = Omit<TProduct, "id">;
+import { API_URL, TAPIResponse } from "../Services/API";
+import { usePopup } from "../Context/PopupContext";
+import { TProductProperties } from "../Components/ProductEditor";
+type TProductWithoutId = Omit<TProductProperties, "id">;
 
 const updateProduct = ({
   product,
@@ -12,6 +14,7 @@ const updateProduct = ({
   product: TProductWithoutId;
   id?: string;
 }) => {
+  console.log("ABOUT TO SEND", product);
   return axios.put(`${API_URL}/api/products/${id}`, product, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
@@ -68,6 +71,7 @@ const mutateData = (data: TDataMutationFn) => {
 };
 
 export default function useProductEditorMutation() {
+  const { notify } = usePopup();
   const navigate = useNavigate();
   const revalidator = useRevalidator();
 
@@ -78,9 +82,14 @@ export default function useProductEditorMutation() {
     onSuccess(data) {
       const responseData = (data.data as TAPIResponse).data;
       revalidator.revalidate();
+
       if (isAPIDeleteResponse(responseData)) {
         navigate("/dashboard/product");
+        notify("Successfuly Deleted Item");
+        return;
       }
+
+      notify("Successfuly Saved Item");
     },
   });
 

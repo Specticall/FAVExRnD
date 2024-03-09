@@ -1,5 +1,4 @@
-import axios from "axios";
-import { API_URL } from "../Services/API";
+import { getAllData } from "../Services/API";
 import { Outlet, redirect } from "react-router-dom";
 import { DashboardProvider, useDashboard } from "../Context/DashboardContext";
 import { useMemo } from "react";
@@ -8,34 +7,7 @@ import Button from "../Components/Button";
 
 export const loader = async () => {
   try {
-    const userRequest = axios.get(`${API_URL}/api/user`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-      },
-    });
-
-    const productRequest = axios.get(`${API_URL}/api/products`);
-
-    const dataResponse = await Promise.allSettled([
-      productRequest,
-      userRequest,
-    ]);
-
-    const data = dataResponse
-      .map((data) => {
-        return data.status === "fulfilled" ? data.value.data : undefined;
-      })
-      .reduce((data, current) => {
-        if (current.name) return { ...data, userData: current };
-        if (current?.data?.products)
-          return { ...data, productData: current?.data?.products };
-        return data;
-      }, {});
-
-    console.log(
-      "EVERY USER CAN STILL LOG IN, ADMIN ROLE SPECIFICATION NOT YET ADDED"
-    );
-    console.log(data);
+    const data = await getAllData();
     return data;
   } catch (err) {
     return redirect("/home");
