@@ -1,18 +1,22 @@
 import { useState } from "react";
 import ProductList from "./ProductList";
-import { productType } from "../Services/API";
+import { TCategory } from "../Context/DashboardContext";
+import { useHome } from "../Context/HomeContext";
 
-type TProductType = (typeof productType)[number];
+// type TProductType = (typeof productType)[number];
+
 const selectedStyle = { background: "#392A2A", color: "#F9F1E9" };
 export function Products() {
+  const { categoryData } = useHome();
+
   const [gender, setGender] = useState<"Men" | "Women">("Men");
-  const [type, setType] = useState<TProductType>(productType[0]);
+  const [type, setType] = useState<TCategory | undefined>(categoryData?.[0]);
 
   const handleSelectGender = (gender: "Men" | "Women") => () => {
     setGender(gender);
   };
 
-  const handleSelectType = (type: TProductType) => () => {
+  const handleSelectType = (type: TCategory) => () => {
     setType(type);
   };
 
@@ -35,14 +39,14 @@ export function Products() {
         </button>
       </div>
 
-      <ul className="flex justify-between px-16 mt-8 border-[2px] border-main rounded-md mx-8 py-4 text-small font-body">
-        {productType.map((product, i) => {
+      <ul className="flex justify-center px-16 mt-8 border-[2px] border-main rounded-md mx-8 py-4 text-small font-body gap-8">
+        {categoryData?.map((category, i) => {
           return (
             <li
-              key={`${product}-${i}-key`}
+              key={`${category.id}-${i}-key`}
               className="hover:text-light cursor-pointer px-4 py-2 rounded-md"
               style={
-                type === product
+                type?.id === category.id
                   ? {
                       fontWeight: "400",
                       background: "#392A2A",
@@ -50,14 +54,13 @@ export function Products() {
                     }
                   : undefined
               }
-              onClick={handleSelectType(product)}
+              onClick={handleSelectType(category)}
             >
-              {product}
+              {category.label}
             </li>
           );
         })}
       </ul>
-      <ProductList />
       <ProductList />
     </section>
   );

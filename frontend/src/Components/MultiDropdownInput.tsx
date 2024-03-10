@@ -1,29 +1,39 @@
 import { useState } from "react";
 
-export default function MultiDropdownInput<T extends string>({
+export default function MultiDropdownInput<
+  T extends { label: string; id: number }
+>({
   options,
   onSelect = () => {},
+  defaultValue = [],
 }: {
   options: T[];
   onSelect?: (selected: T[]) => void;
+  defaultValue?: T["id"][];
 }) {
-  const [selected, setSelected] = useState<V[]>([]);
+  const [selectedId, setSelected] = useState<T["id"][]>(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelect = (type: T) => () => {
-    setSelected((selected) => {
-      const newSelected = selected.includes(type)
+  const handleSelect = (optionId: T["id"]) => () => {
+    setSelected((selectedId) => {
+      const isAlreadySelected = selectedId.includes(optionId);
+
+      const newSelected = isAlreadySelected
         ? // Remove if the same option is selected
-          selected.filter((x) => x !== type)
+          selectedId.filter((id) => id !== optionId)
         : // Add if option is not added yet
-          [...selected, type];
+          [...selectedId, optionId];
 
       // Trigger onSelect callback
-      onSelect(newSelected);
+      onSelect(options.filter((option) => newSelected.includes(option.id)));
 
       return newSelected;
     });
   };
+
+  const selectedItems = options.filter((option) =>
+    selectedId.includes(option.id)
+  );
 
   const handleOpen = () => {
     setIsOpen((current) => !current);
@@ -35,8 +45,10 @@ export default function MultiDropdownInput<T extends string>({
         onClick={handleOpen}
       >
         <p>
-          {selected.reduce((selected, item) => {
-            return `${selected}${selected.length > 0 ? ",  " : ""}${item}`;
+          {selectedItems.reduce((selected, item) => {
+            return `${selected}${selected.length > 0 ? ",  " : ""}${
+              item.label
+            }`;
           }, "") || "Select Category"}
         </p>
         <i
@@ -52,12 +64,12 @@ export default function MultiDropdownInput<T extends string>({
       >
         <div className="overflow-hidden">
           <ul className="divide-y-[1px] divide-main mt-4 border-[1.5px] border-main rounded-md overflow-hidden">
-            {options.map((type) => {
+            {options.map((option) => {
               return (
                 <li
                   className=" text-main py-2 px-4 bg-[#FFFCFA] hover:bg-[#dcd7d3] cursor-pointer"
                   style={
-                    selected.includes(type)
+                    selectedId.includes(option.id)
                       ? {
                           backgroundColor: "#392A2A",
                           color: "#F9F1E9",
@@ -65,9 +77,9 @@ export default function MultiDropdownInput<T extends string>({
                         }
                       : undefined
                   }
-                  onClick={handleSelect(type)}
+                  onClick={handleSelect(option.id)}
                 >
-                  {type}
+                  {option.label}
                 </li>
               );
             })}

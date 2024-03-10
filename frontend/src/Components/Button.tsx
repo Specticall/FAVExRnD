@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 type Props = {
   to?: string;
-  onClick?: () => void;
+  onClick?: MouseEventHandler;
   className?: string;
   disabled?: boolean;
 };
@@ -22,7 +22,7 @@ export default function Button({
       e.preventDefault();
       navigate(to);
     }
-    onClick();
+    onClick(e);
   };
   return (
     <button

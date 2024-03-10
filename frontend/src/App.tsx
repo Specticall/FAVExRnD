@@ -10,6 +10,10 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Dashboard, { loader as dashboardLoader } from "./Pages/Dashboard";
 import { ProductBoard } from "./Components/ProductBoard";
 import ProductEditor from "./Components/ProductEditor";
+import { AuthProvider } from "./Context/AuthContext";
+import PopupProvider from "./Context/PopupContext";
+import { ModalProvider } from "./Context/ModalContext";
+import CategoryModal from "./Components/CategoryModal";
 
 const router = createBrowserRouter([
   {
@@ -51,12 +55,25 @@ const router = createBrowserRouter([
   },
 ]);
 
+const modalElements = [
+  {
+    name: "category",
+    element: <CategoryModal />,
+  },
+];
+
 const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <PopupProvider>
+        <AuthProvider>
+          <ModalProvider elements={modalElements}>
+            <RouterProvider router={router} />
+          </ModalProvider>
+        </AuthProvider>
+      </PopupProvider>
     </QueryClientProvider>
   );
 }

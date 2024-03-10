@@ -1,6 +1,6 @@
 import Button from "../Components/Button";
 import Icons from "../Components/Icons";
-import { useAuth } from "../Context/AuthContext";
+import { useHome } from "../Context/HomeContext";
 
 export function HeroBG() {
   return (
@@ -15,8 +15,9 @@ export function HeroBG() {
   );
 }
 
-export function Hero({ username }: { username: string | undefined }) {
-  const { isAuthenticated } = useAuth();
+export function Hero() {
+  const { userData, isAuthenticated } = useHome();
+  const username = userData?.name;
 
   return (
     <section id="#hero" className="pt-40 mx-auto max-w-[70rem] text-center">

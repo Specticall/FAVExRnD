@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { isNumber } from "../utils/helper";
 
 export default function Counter({
@@ -9,12 +9,14 @@ export default function Counter({
   defaultValue?: number;
 }) {
   const [counter, setCounter] = useState(defaultValue);
-  const handleIncrement = () => {
+  const handleIncrement: MouseEventHandler = (e) => {
+    e.preventDefault();
     setCounter((cur) => cur + 1);
     onChange(counter + 1);
   };
 
-  const handleDecrement = () => {
+  const handleDecrement: MouseEventHandler = (e) => {
+    e.preventDefault();
     setCounter((cur) => Math.max(cur - 1, 0));
     onChange(counter + 1);
   };
