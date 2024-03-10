@@ -80,7 +80,7 @@ class CartController extends Controller
 
             $cart = Cart::where('user_id', '=', $user->id)->where('product_id', '=', $request->product_id)->first();
 
-            if ($cart->id) {
+            if ($cart) {
                 Cart::where('id', '=', $cart->id)->update([
                     'quantity' => $cart->quantity + $request->quantity
                 ]);
@@ -105,7 +105,7 @@ class CartController extends Controller
             return response()->json([
                 'status' => 500,
                 'data' => [
-                    'msg' => 'Internal server error!'
+                    'msg' => $th->getMessage()
                 ]
             ], 500);
         }

@@ -1,8 +1,12 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import { IMAGE_PATH, convertToRupiah } from "../utils/helper";
 import { useHome } from "../Context/HomeContext";
+import { TProduct } from "../Services/API";
+import Button from "./Button";
+import Spinner from "./Spinner";
+import { useCart } from "../Context/CartContext";
+import useCartMutation from "../Hooks/useCartMutation";
 
 export default function ProductList() {
   const { productData } = useHome();
@@ -15,7 +19,7 @@ export default function ProductList() {
           {productData?.map((product) => {
             return (
               <SwiperSlide key={product.id}>
-                <ProductItem {...product} />
+                <ProductItem product={product} />
               </SwiperSlide>
             );
           })}
@@ -27,23 +31,19 @@ export default function ProductList() {
   );
 }
 
-function ProductItem({
-  name,
-  price,
-  img,
-  discount,
-}: {
-  name: string;
-  price: number;
-  img: string;
-  discount?: number;
-}) {
+function ProductItem({ product }: { product: TProduct }) {
+  const { isInCart } = useCart();
+  const { addToCart, removeFromCart, isDeleting, isCreating } = useCartMutation(
+    { product }
+  );
+
+  const { discount, price, name, img, stock } = product;
+
   const discountedPrice = discount && price * (1 - discount);
 
   return (
-    <article className="grid group overflow-visible cursor-pointer">
+    <article className="grid group overflow-visible cursor-pointer font-body">
       <div className="relative border-[.25rem] border-white rounded-lg shadow-lg overflow-hidden bg-white">
-        {/* <div className="grid place-items-center absolute inset-0 z-10 bg-black opacity-0 group-hover:opacity-10 transition-all duration-100"></div> */}
         <img
           src={`${IMAGE_PATH}/${img}`}
           alt={`${name} image`}
@@ -63,6 +63,34 @@ function ProductItem({
             {convertToRupiah(price)}
           </p>
         ) : null}
+      </div>
+      <div
+        className="flex items-center justify-start
+                   gap-3 mb-2 flex-wrap"
+      >
+        <div className="px-4 py-1 border-[1.5px] border-main rounded-md w-fit text-small">
+          Stock: {stock}
+        </div>
+      </div>
+      <div className="flex items-center justify-center gap-4 mt-2">
+        {isInCart(product.id) ? (
+          <Button
+            className="px-4 py-2 bg-transparent text-main border-[1.5px] border-main rounded-md flex-1 hover:bg-light hover:text-body cursor-pointer flex items-center justify-center"
+            onClick={removeFromCart}
+          >
+            {isDeleting ? <Spinner /> : "Remove from cart"}
+          </Button>
+        ) : (
+          <Button
+            className="px-4 py-2 bg-main text-body rounded-md flex-1 hover:bg-light cursor-pointer flex items-center justify-center"
+            onClick={addToCart}
+          >
+            {isCreating ? <Spinner /> : "+ Add to Cart"}
+          </Button>
+        )}
+        <Button className="text-title grid place-items-center  rounded-md px-2 py-2">
+          <i className="bx bx-heart"></i>
+        </Button>
       </div>
     </article>
   );

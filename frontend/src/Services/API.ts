@@ -1,8 +1,9 @@
 import axios from "axios";
 import { TCategory } from "../Context/DashboardContext";
+import { API_URL } from "./config";
 
 export type TProduct = {
-  id: string;
+  id: number;
   name: string;
   img: string;
   desc: string;
@@ -62,7 +63,7 @@ export type TProduct = {
 //     categories: ["Hats", "Unisex"],
 //   },
 // ];
-export const API_URL = "http://127.0.0.1:8000";
+
 export type APIError = {
   status: number;
   data: {
@@ -78,10 +79,18 @@ export type TUserData = {
   id: string;
   role: "Admin" | "Basic";
 };
+
+export type TCart = {
+  id: number;
+  product_id: number;
+  quantity: number;
+  product: TProduct;
+};
 export type TAllDataResponse = {
   userData: TUserData;
   productData: (TProduct & { user: TUserData })[];
   categoryData: TCategory[];
+  cartRequest: TCart[];
 };
 export type TAPIResponse = { status: number; data: unknown };
 export const productType = [
@@ -105,10 +114,17 @@ export const getAllData = async () => {
 
   const categoryRequest = axios.get(`${API_URL}/api/categories`);
 
+  const cartRequest = axios.get(`${API_URL}/api/cart`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+    },
+  });
+
   const dataResponse = await Promise.allSettled([
     productRequest,
     userRequest,
     categoryRequest,
+    cartRequest,
   ]);
 
   const data = dataResponse
@@ -122,6 +138,9 @@ export const getAllData = async () => {
         return { ...data, productData: current?.data?.products };
       if (current?.data?.categories)
         return { ...data, categoryData: current.data.categories };
+      if (current?.data?.cart) {
+        return { ...data, cartData: current.data.cart };
+      }
       return data;
     }, {});
 

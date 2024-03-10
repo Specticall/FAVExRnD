@@ -1,11 +1,11 @@
 import { useMutation } from "react-query";
-import { API_URL } from "../Services/API";
+import { API_URL } from "../Services/config";
 import axios, { AxiosError } from "axios";
 import { TCategory } from "../Context/DashboardContext";
-import { AUTH_HEADER } from "../utils/helper";
 import { useEffect, useState } from "react";
 import { usePopup } from "../Context/PopupContext";
 import Spinner from "./Spinner";
+import { useAuth } from "../Context/AuthContext";
 
 type TGetCategorySuccessResponse = {
   status: number;
@@ -20,18 +20,20 @@ type TModifyCategorySuccessResponse = {
   };
 };
 
-const getCategory = () => axios.get(`${API_URL}/api/categories`);
-const createCategory = (category: { label: string }) =>
-  axios.post(`${API_URL}/api/categories`, category, AUTH_HEADER);
-const deleteCategory = (id: number) =>
-  axios.delete(`${API_URL}/api/categories/${id}`, AUTH_HEADER);
-
 const onMutationError = (error: AxiosError) => {
   console.log(error);
 };
 
 export default function CategoryModal() {
   const { notify } = usePopup();
+  const { AUTH_HEADER } = useAuth();
+
+  const getCategory = () => axios.get(`${API_URL}/api/categories`);
+
+  const createCategory = (category: { label: string }) =>
+    axios.post(`${API_URL}/api/categories`, category, AUTH_HEADER);
+  const deleteCategory = (id: number) =>
+    axios.delete(`${API_URL}/api/categories/${id}`, AUTH_HEADER);
 
   const [isGettingDeletedId, setIsGettingDeleteId] = useState(0);
   const [categories, setCategories] = useState<TCategory[]>([]);

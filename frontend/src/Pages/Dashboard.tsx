@@ -33,7 +33,7 @@ function Heading() {
     <div className="mb-8 flex items-center justify-between gap-8">
       <h1 className="text-title text-light">
         Welcome,
-        <span className="font-semibold text-main"> {userData.name}</span>
+        <span className="font-semibold text-main"> {userData?.name}</span>
       </h1>{" "}
       <Button
         className="font-body flex items-center justify-center gap-2 hover:text-light"
@@ -52,7 +52,7 @@ function Statistics() {
     () => [
       {
         title: "Total Products Sold",
-        content: `${productData.length} units`,
+        content: `${productData?.length} units`,
         style: {
           backgroundColor: "#FFD5A5",
           color: "#392A2A",
@@ -60,7 +60,8 @@ function Statistics() {
       },
       {
         title: "Most Recent Product",
-        content: productData[productData.length - 1]?.name || "No Products Yet",
+        content:
+          productData?.[productData?.length - 1]?.name || "No Products Yet",
         style: { backgroundColor: "#392A2A", color: "white" },
       },
       {

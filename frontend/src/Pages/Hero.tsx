@@ -16,12 +16,13 @@ export function HeroBG() {
 }
 
 export function Hero() {
-  const { userData, isAuthenticated } = useHome();
+  const { userData } = useHome();
+
   const username = userData?.name;
 
   return (
     <section id="#hero" className="pt-40 mx-auto max-w-[70rem] text-center">
-      {isAuthenticated && (
+      {userData?.name && (
         <p className="text-title text-light mb-6">
           Welcome Back, <span className="font-bold text-main">{username}</span>
         </p>
@@ -34,7 +35,7 @@ export function Hero() {
         Our Garments, Woven with Whiskered Precision and Hat-tastic Flair,
         Promise a Purrmanence of Quality and Durability.
       </p>
-      {isAuthenticated || (
+      {userData?.name || (
         <Button
           to="/login"
           className="bg-main px-16 py-3 rounded-md text-body font-body text-heading mt-12 hover:bg-light"

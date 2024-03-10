@@ -1,18 +1,14 @@
-import { API_URL } from "../Services/API";
+import { API_URL } from "../Services/config";
 
 export type RemoveReadonly<T> = { -readonly [P in keyof T]: T[P] };
+
+export type TAPIResponse<T> = { status: number; data: T };
 
 export const IMAGE_PATH = `${API_URL}/storage`;
 
 export function isNumber(str: string) {
   return /^\d+$/.test(str);
 }
-
-export const AUTH_HEADER = {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-  },
-};
 
 export function convertImageToBase64(imgUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {

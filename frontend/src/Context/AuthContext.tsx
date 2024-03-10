@@ -1,45 +1,80 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { AxiosResponse } from "axios";
+import { createContext, useContext, useEffect, useState } from "react";
+import { Outlet, useNavigate, useRevalidator } from "react-router-dom";
+import CategoryModal from "../Components/CategoryModal";
+import { ModalProvider } from "./ModalContext";
 
 type TAuthContextValues = {
   isAuthenticated: boolean;
-  logoutUser: () => void;
+  handleLogout: () => void;
+  handleLogin: (data: AxiosResponse) => void;
   setRole: React.Dispatch<React.SetStateAction<"Basic" | "Admin">>;
   role: "Basic" | "Admin";
-};
-type Props = {
-  children: ReactNode;
+  token: string | undefined;
+  AUTH_HEADER: { headers: { Authorization: string } };
 };
 
 const AuthContext = createContext<TAuthContextValues | null>(null);
 
-export function AuthProvider({ children }: Props) {
+const modalElements = [
+  {
+    name: "category",
+    element: <CategoryModal />,
+  },
+];
+
+export function AuthProvider() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState<null | string>(null);
+
+  const revalidator = useRevalidator();
+  const navigate = useNavigate();
+  const [token, setToken] = useState<undefined | string>();
   const [role, setRole] = useState<"Basic" | "Admin">("Basic");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
     setIsAuthenticated(token ? true : false);
-  }, [token, role]);
+  }, [token]);
 
-  const logoutUser = () => {
+  const handleLogout = () => {
+    setToken(undefined);
     localStorage.removeItem("token");
-    setToken(null);
-    setIsAuthenticated(false);
+    revalidator.revalidate();
+  };
+
+  const handleLogin = (data: AxiosResponse) => {
+    const loginData = data.data;
+    const token = loginData.data.token;
+    const role = loginData.data.role;
+
+    localStorage.setItem("token", token);
+    console.log("SET TOKEN");
+    setToken(token);
+    setRole(role);
+
+    navigate("/home");
+  };
+
+  const AUTH_HEADER = {
+    headers: {
+      Authorization: `Bearer ${token || ""}`,
+    },
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, logoutUser, setRole, role }}
+      value={{
+        isAuthenticated,
+        handleLogout,
+        handleLogin,
+        setRole,
+        role,
+        token,
+        AUTH_HEADER,
+      }}
     >
-      {children}
+      <ModalProvider elements={modalElements}>
+        <Outlet />
+      </ModalProvider>
     </AuthContext.Provider>
   );
 }

@@ -5,7 +5,8 @@ import Button from "../Components/Button";
 import { TextInput } from "../Components/TextInput";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
-import { API_URL, APIError } from "../Services/API";
+import { APIError } from "../Services/API";
+import { API_URL } from "../Services/config";
 import { useNavigate } from "react-router-dom";
 
 type TRegisterFields = {
