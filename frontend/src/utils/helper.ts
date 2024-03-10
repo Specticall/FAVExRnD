@@ -56,3 +56,7 @@ export function isAPIDeleteResponse(responseData: unknown) {
     responseData.msg.includes("Delete")
   );
 }
+
+// export function
+
+// LIMIT : 40

@@ -11,6 +11,7 @@ import useProductEditorMutation from "../Hooks/useProductEditorMutation";
 import Spinner from "./Spinner";
 import { useModal } from "../Context/ModalContext";
 import { useNavigate, useRevalidator } from "react-router-dom";
+import { usePopup } from "../Context/PopupContext";
 
 function ProductNavbar() {
   const { showModal } = useModal();
@@ -42,6 +43,7 @@ export type TProductProperties = {
   desc: string;
   price: number;
   stock: number;
+  discount: number;
   categories: number[];
 };
 
@@ -55,6 +57,7 @@ export default function ProductEditor() {
 
   const { selectedProduct, categoryData } = useDashboard();
   const [temporaryImageURL, setTemporaryImageURL] = useState("");
+  const { notify } = usePopup();
 
   // Encapsulates the product editor login into a single custom hook.
   const { mutation } = useProductEditorMutation();
@@ -69,6 +72,8 @@ export default function ProductEditor() {
       desc: selectedProduct?.desc || "",
       price: selectedProduct?.price,
       stock: selectedProduct?.stock || 0,
+      discount:
+        (selectedProduct?.discount && selectedProduct?.discount * 100) || 0,
       categories:
         selectedProduct?.categories.map((category) => category.id) || [],
     },
@@ -83,15 +88,22 @@ export default function ProductEditor() {
       ...value,
       img: base64Image,
       price: Number(value.price),
-      discount: 0,
+      discount: value.discount / 100,
     };
     const id = selectedProduct?.id;
     // If an id for a product exist means we're updating.
     if (id) {
       mutation.mutate({ product: newValue, id, type: "update" });
-    } else {
-      mutation.mutate({ product: newValue, type: "create" });
+      return;
     }
+
+    // Image can't be empty on post requests
+    if (temporaryImageURL.length === 0) {
+      notify("Image can't be empty");
+      return;
+    }
+
+    mutation.mutate({ product: newValue, type: "create" });
   };
 
   const handleDelete = () => {
@@ -114,7 +126,7 @@ export default function ProductEditor() {
           <div>
             <div className="flex mb-6 items-center justify-between">
               <h2 className=" text-title font-semibold text-main ">
-                Add Products
+                {selectedProduct?.id ? "Edit" : "Add"} Product
               </h2>
               {selectedProduct?.id && (
                 <Button
@@ -190,15 +202,34 @@ export default function ProductEditor() {
                   (Can select more than one)
                 </p>
               </div>
-              <div className="grid gap-2 max-w-[10rem]">
-                <label className="text-small text-lighter">Stock</label>
-                <Controller
-                  name="stock"
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <Counter onChange={onChange} defaultValue={value} />
-                  )}
+              <div className="grid grid-cols-2 gap-8 place-items-start">
+                <TextInput
+                  placeholder="90"
+                  formLabel="Discount (%)"
+                  style="boxed"
+                  errorMessage={errors.discount?.message}
+                  {...register("discount", {
+                    max: {
+                      value: 100,
+                      message: "Can't be over 100",
+                    },
+                    min: {
+                      value: 0,
+                      message: "Can't be negative",
+                    },
+                    valueAsNumber: true,
+                  })}
                 />
+                <div className="grid gap-2 max-w-[10rem]">
+                  <label className="text-small text-lighter">Stock</label>
+                  <Controller
+                    name="stock"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Counter onChange={onChange} defaultValue={value} />
+                    )}
+                  />
+                </div>{" "}
               </div>
             </div>
           </div>

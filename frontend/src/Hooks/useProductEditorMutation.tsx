@@ -78,6 +78,7 @@ export default function useProductEditorMutation() {
   const mutation = useMutation(mutateData, {
     onError(error: AxiosError) {
       console.log({ ...error, stack: "" });
+      notify("Oops, Something went wrong");
     },
     onSuccess(data) {
       const responseData = (data.data as TAPIResponse).data;
