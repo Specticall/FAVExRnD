@@ -1,20 +1,20 @@
 import { ReactNode, createContext, useContext } from "react";
 import { TProduct, TUserData } from "../Services/API";
 import { TCategory } from "./DashboardContext";
-import { useLoaderData, useRevalidator } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 
 type THomeContextValues = {
   userData?: TUserData;
   productData?: (TProduct & { user: TUserData })[];
   categoryData?: TCategory[];
-  isAuthenticated: boolean;
-  logoutUser: () => void;
+  // isAuthenticated: boolean;
+  // logoutUser: () => void;
 };
 
 const HomeContext = createContext<THomeContextValues | null>(null);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
-  const revalidator = useRevalidator();
+  // const revalidator = useRevalidator();
   const loadedData = useLoaderData() as {
     userData?: TUserData;
     productData?: (TProduct & { user: TUserData })[];
@@ -25,12 +25,14 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const productData = loadedData?.productData;
   const categoryData = loadedData?.categoryData;
 
-  const isAuthenticated = userData?.name ? true : false;
+  // const isAuthenticated = userData?.name ? true : false;
 
-  const logoutUser = () => {
-    localStorage.removeItem("token");
-    revalidator.revalidate();
-  };
+  // const logoutUser = () => {
+  //   console.log("LOGOUT");
+  //   queryClient.invalidateQueries();
+  //   localStorage.removeItem("token");
+  //   revalidator.revalidate();
+  // };
 
   return (
     <HomeContext.Provider
@@ -38,8 +40,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         userData,
         categoryData,
         productData,
-        isAuthenticated,
-        logoutUser,
+        // isAuthenticated,
+        // logoutUser,
       }}
     >
       {children}

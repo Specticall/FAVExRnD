@@ -10,7 +10,7 @@ import { convertImageToBase64 } from "../utils/helper";
 import useProductEditorMutation from "../Hooks/useProductEditorMutation";
 import Spinner from "./Spinner";
 import { useModal } from "../Context/ModalContext";
-import { useNavigate, useRevalidator } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { usePopup } from "../Context/PopupContext";
 
 function ProductNavbar() {
@@ -88,9 +88,9 @@ export default function ProductEditor() {
       ...value,
       img: base64Image,
       price: Number(value.price),
-      discount: value.discount / 100,
+      discount: value.discount ? value.discount / 100 : 0,
     };
-    const id = selectedProduct?.id;
+    const id = selectedProduct?.id && Number(selectedProduct.id);
     // If an id for a product exist means we're updating.
     if (id) {
       mutation.mutate({ product: newValue, id, type: "update" });

@@ -8,8 +8,10 @@ type TDashboardContextValues = {
   categoryData?: TCategory[];
   productFiltered?: (TProduct & { user: TUserData })[];
   setProductSearchQuery: React.Dispatch<React.SetStateAction<string>>;
-  selectProductById: (id: string) => void;
+  selectProductById: (id: number | null) => void;
   selectedProduct: (TProduct & { user: TUserData }) | undefined;
+  onGoingRequest: number;
+  setOnGoingRequest: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type TCategory = {
@@ -25,14 +27,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     productData?: (TProduct & { user: TUserData })[];
     categoryData?: TCategory[];
   };
-
+  const [onGoingRequest, setOnGoingRequest] = useState<number>(0);
   const [productSearchQuery, setProductSearchQuery] = useState("");
 
   const [selectedProduct, setSelectedProduct] = useState<
     (TProduct & { user: TUserData }) | undefined
   >();
 
-  const selectProductById = (id: string | null) => {
+  const selectProductById = (id: number | null) => {
     if (id) {
       setSelectedProduct(productData?.find((product) => product.id === id));
     } else {
@@ -62,6 +64,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         setProductSearchQuery,
         selectProductById,
         selectedProduct,
+        onGoingRequest,
+        setOnGoingRequest,
       }}
     >
       {children}

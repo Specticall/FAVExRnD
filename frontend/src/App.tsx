@@ -17,62 +17,56 @@ import CategoryModal from "./Components/CategoryModal";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Navigate to="/home" />,
-  },
-  {
-    loader: homeLoader,
-    path: "/home",
-    element: <Home />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    loader: dashboardLoader,
-    path: "/dashboard",
-    element: <Dashboard />,
+    element: <AuthProvider />,
     children: [
       {
+        path: "/",
+        element: <Navigate to="/home" />,
+      },
+      {
+        loader: homeLoader,
+        path: "/home",
+        element: <Home />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        loader: dashboardLoader,
         path: "/dashboard",
-        element: <Navigate to="/dashboard/product" />,
-      },
+        element: <Dashboard />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <Navigate to="/dashboard/product" />,
+          },
 
-      {
-        path: "product",
-        element: <ProductBoard />,
-      },
-      {
-        path: "modify",
-        element: <ProductEditor />,
+          {
+            path: "product",
+            element: <ProductBoard />,
+          },
+          {
+            path: "modify",
+            element: <ProductEditor />,
+          },
+        ],
       },
     ],
   },
 ]);
 
-const modalElements = [
-  {
-    name: "category",
-    element: <CategoryModal />,
-  },
-];
-
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <PopupProvider>
-        <AuthProvider>
-          <ModalProvider elements={modalElements}>
-            <RouterProvider router={router} />
-          </ModalProvider>
-        </AuthProvider>
+        <RouterProvider router={router} />
       </PopupProvider>
     </QueryClientProvider>
   );

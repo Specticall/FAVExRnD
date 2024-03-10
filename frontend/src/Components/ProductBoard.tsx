@@ -41,7 +41,7 @@ export function ProductBoard() {
   // Clears empty product selection & refetch data everytime user loads the /dashboard/product route
   useEffect(() => {
     // revalidator.revalidate();
-    selectProductById("");
+    selectProductById(null);
   }, [selectProductById, revalidator]);
 
   return (
@@ -56,6 +56,11 @@ export function ProductBoard() {
                 navigate("/dashboard/modify");
               };
 
+              const discountedPrice =
+                product?.discount &&
+                product?.discount > 0 &&
+                product.price * (1 - product.discount);
+
               return (
                 <SwiperSlide className="h-[40rem] grid grid-rows-[minmax(0,1fr)_5rem] gap-4">
                   <div className="overflow-hidden">
@@ -65,9 +70,21 @@ export function ProductBoard() {
                       className="h-[20rem] w-full object-cover object-top rounded-lg"
                     />
                     <p className="mt-6">{product.name}</p>
-                    <h2 className="text-title font-semibold">
-                      {convertToRupiah(product.price)}
-                    </h2>
+
+                    <p
+                      className={`text-title text-main font-semibold`}
+                      style={
+                        product.discount ? { color: "#CC2A06" } : undefined
+                      }
+                    >
+                      {convertToRupiah(discountedPrice || product.price)}
+                    </p>
+                    {product.discount !== 0 ? (
+                      <p className="text-main line-through font-bold">
+                        {convertToRupiah(product.price)}
+                      </p>
+                    ) : null}
+
                     <div
                       className="flex items-center justify-start
                    gap-3 mt-2 mb-4 flex-wrap"

@@ -5,8 +5,8 @@ import Button from "../Components/Button";
 import { TextInput } from "../Components/TextInput";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
-import { APIError, API_URL } from "../Services/API";
-import { useNavigate } from "react-router-dom";
+import { APIError } from "../Services/API";
+import { API_URL } from "../Services/config";
 import { useAuth } from "../Context/AuthContext";
 
 type TLoginFields = {
@@ -14,22 +14,21 @@ type TLoginFields = {
   password: string;
 };
 
-type TAPILoginResponse = {
-  status: number;
-  data: {
-    token: string;
-    role: "Basic" | "Admin";
-    name: string;
-  };
-};
+// type TAPILoginResponse = {
+//   status: number;
+//   data: {
+//     token: string;
+//     role: "Basic" | "Admin";
+//     name: string;
+//   };
+// };
 
 const loginUser = (data: TLoginFields) => {
   return axios.post(`${API_URL}/api/login`, data);
 };
 
 export default function Login() {
-  const navigate = useNavigate();
-  const { setRole } = useAuth();
+  const { handleLogin } = useAuth();
   const {
     register,
     handleSubmit,
@@ -51,17 +50,7 @@ export default function Login() {
         });
       }
     },
-    onSuccess: (data) => {
-      const loginData = data.data as TAPILoginResponse;
-      const token = loginData.data.token;
-      const role = loginData.data.role;
-
-      localStorage.setItem("token", token);
-
-      setRole(role);
-
-      navigate("/home");
-    },
+    onSuccess: handleLogin,
   });
 
   const onSubmit: SubmitHandler<TLoginFields> = (value) => {
