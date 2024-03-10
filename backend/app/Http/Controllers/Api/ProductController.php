@@ -155,7 +155,7 @@ class ProductController extends Controller
                     'desc' => 'required',
                     'price' => 'required',
                     'stock' => 'required',
-                    'discount' => 'required|max:1|min:0'
+                    'discount' => 'required'
                 ]
             );
 
