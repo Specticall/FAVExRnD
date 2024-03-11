@@ -1,5 +1,11 @@
 import { AxiosResponse } from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Outlet, useNavigate, useRevalidator } from "react-router-dom";
 import CategoryModal from "../Components/CategoryModal";
 import { ModalProvider } from "./ModalContext";
@@ -16,14 +22,7 @@ type TAuthContextValues = {
 
 const AuthContext = createContext<TAuthContextValues | null>(null);
 
-const modalElements = [
-  {
-    name: "category",
-    element: <CategoryModal />,
-  },
-];
-
-export function AuthProvider() {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const revalidator = useRevalidator();
@@ -34,6 +33,11 @@ export function AuthProvider() {
   useEffect(() => {
     setIsAuthenticated(token ? true : false);
   }, [token]);
+
+  // Get user token on mount;
+  useEffect(() => {
+    setToken(localStorage.getItem("token") || undefined);
+  }, []);
 
   const handleLogout = () => {
     setToken(undefined);
@@ -72,9 +76,7 @@ export function AuthProvider() {
         AUTH_HEADER,
       }}
     >
-      <ModalProvider elements={modalElements}>
-        <Outlet />
-      </ModalProvider>
+      {children}
     </AuthContext.Provider>
   );
 }

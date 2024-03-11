@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useState } from "react";
 import { TProduct, TUserData } from "../Services/API";
 import { TCategory } from "./DashboardContext";
 import { useLoaderData } from "react-router-dom";
@@ -7,32 +7,34 @@ type THomeContextValues = {
   userData?: TUserData;
   productData?: (TProduct & { user: TUserData })[];
   categoryData?: TCategory[];
-  // isAuthenticated: boolean;
-  // logoutUser: () => void;
+  setFilter: (categoryId: number) => void;
+  selectedFilter: TCategory;
 };
 
 const HomeContext = createContext<THomeContextValues | null>(null);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
-  // const revalidator = useRevalidator();
   const loadedData = useLoaderData() as {
     userData?: TUserData;
     productData?: (TProduct & { user: TUserData })[];
     categoryData?: TCategory[];
   };
 
+  const [selectedFilter, setSelectedFilter] = useState<TCategory | undefined>();
+
   const userData = loadedData?.userData;
   const productData = loadedData?.productData;
   const categoryData = loadedData?.categoryData;
 
-  // const isAuthenticated = userData?.name ? true : false;
-
-  // const logoutUser = () => {
-  //   console.log("LOGOUT");
-  //   queryClient.invalidateQueries();
-  //   localStorage.removeItem("token");
-  //   revalidator.revalidate();
-  // };
+  const setFilter = (categoryId: number) => {
+    const targetCategory = categoryData?.find(
+      (category) => category.id === categoryId
+    );
+    if (!targetCategory) {
+      throw new Error(`Can't switch to category id: ${categoryId}`);
+    }
+    setSelectedFilter(targetCategory);
+  };
 
   return (
     <HomeContext.Provider
@@ -40,8 +42,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         userData,
         categoryData,
         productData,
-        // isAuthenticated,
-        // logoutUser,
+        setFilter,
+        selectedFilter,
       }}
     >
       {children}
