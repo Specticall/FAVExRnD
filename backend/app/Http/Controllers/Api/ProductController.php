@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +15,19 @@ class ProductController extends Controller
     public function getProducts(Request $request)
     {
         try {
+            $cat = $request->query('categories');
             $products = [];
+
+            if ($cat) {
+                $products = Category::with('products')->where('id', $cat)->get();
+
+                return response()->json([
+                    'status' => 200,
+                    'data' => [
+                        'products' => $products
+                    ]
+                ], 200);
+            }
 
             foreach (Product::all() as $key => $value) {
                 $obj = $value;
