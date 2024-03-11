@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->delete('/categories/{id}', [CategoryControlle
 
 Route::middleware('auth:sanctum')->get('/cart', [CartController::class, 'getCart']);
 Route::middleware('auth:sanctum')->post('/cart', [CartController::class, 'addToCart']);
+Route::middleware('auth:sanctum')->put('/cart/decrement/{id}', [CartController::class, 'decrement']);
 Route::middleware('auth:sanctum')->put('/cart/{id}', [CartController::class, 'editCartItem']);
 Route::middleware('auth:sanctum')->delete('/cart/{id}', [CartController::class, 'removeFromCart']);
 
