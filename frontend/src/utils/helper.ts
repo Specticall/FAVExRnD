@@ -53,6 +53,16 @@ export function isAPIDeleteResponse(responseData: unknown) {
   );
 }
 
+export function hasCommonElements<T>(array1: T[], array2: T[]): boolean {
+  const set1 = new Set(array1);
+  for (const element of array2) {
+    if (set1.has(element)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // export function
 
 // LIMIT : 40

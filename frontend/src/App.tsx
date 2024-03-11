@@ -10,14 +10,12 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Dashboard, { loader as dashboardLoader } from "./Pages/Dashboard";
 import { ProductBoard } from "./Components/ProductBoard";
 import ProductEditor from "./Components/ProductEditor";
-import { AuthProvider } from "./Context/AuthContext";
 import PopupProvider from "./Context/PopupContext";
-import { ModalProvider } from "./Context/ModalContext";
-import CategoryModal from "./Components/CategoryModal";
+import RouterFirstChild from "./Components/RouterFirstChild";
 
 const router = createBrowserRouter([
   {
-    element: <AuthProvider />,
+    element: <RouterFirstChild />,
     children: [
       {
         path: "/",

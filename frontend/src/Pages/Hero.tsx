@@ -22,11 +22,11 @@ export function Hero() {
 
   return (
     <section id="#hero" className="pt-40 mx-auto max-w-[70rem] text-center">
-      {userData?.name && (
+      {userData?.name ? (
         <p className="text-title text-light mb-6">
           Welcome Back, <span className="font-bold text-main">{username}</span>
         </p>
-      )}
+      ) : null}
       <h1 className="text-hero text-main leading-[120%] max-w-[45rem] mx-auto font-light tracking-tight mb-8">
         Quality meets style with feline
         <span className="font-normal tracking-normal"> finesse</span>
@@ -35,12 +35,12 @@ export function Hero() {
         Our Garments, Woven with Whiskered Precision and Hat-tastic Flair,
         Promise a Purrmanence of Quality and Durability.
       </p>
-      {userData?.name || (
+      {userData?.name ? null : (
         <Button
-          to="/login"
+          to="/register"
           className="bg-main px-16 py-3 rounded-md text-body font-body text-heading mt-12 hover:bg-light"
         >
-          Login
+          Create an Account
         </Button>
       )}
     </section>

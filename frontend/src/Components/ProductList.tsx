@@ -1,33 +1,54 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { IMAGE_PATH, convertToRupiah } from "../utils/helper";
+import {
+  IMAGE_PATH,
+  convertToRupiah,
+  hasCommonElements,
+} from "../utils/helper";
 import { useHome } from "../Context/HomeContext";
 import { TProduct } from "../Services/API";
 import Button from "./Button";
 import Spinner from "./Spinner";
 import { useCart } from "../Context/CartContext";
 import useCartMutation from "../Hooks/useCartMutation";
+import { TCategory } from "../Context/DashboardContext";
 
-export default function ProductList() {
+export default function ProductList({
+  categoryFilter,
+  isDiscount = false,
+  noFilter = false,
+}: {
+  categoryFilter?: TCategory;
+  isDiscount?: boolean;
+  noFilter?: boolean;
+}) {
   const { productData } = useHome();
 
-  return (
-    <div className="px-8 mt-12">
-      <h2 className="text-large font-semibold mb-8">On Sale</h2>
-      {productData && productData.length > 0 ? (
-        <Swiper slidesPerView={4} spaceBetween={32}>
-          {productData?.map((product) => {
-            return (
-              <SwiperSlide key={product.id}>
-                <ProductItem product={product} />
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      ) : (
-        <div>There's no product to be shown here</div>
-      )}
-    </div>
+  const filteredProduct = productData
+    ?.filter((product) => {
+      if (!categoryFilter?.id) return true;
+      return (
+        product.categories.some(
+          (category) => category.id === categoryFilter.id
+        ) || false
+      );
+    })
+    .filter((product) => {
+      return isDiscount && product.discount && product.discount > 0;
+    });
+
+  return productData && productData.length > 0 ? (
+    <Swiper slidesPerView={4} spaceBetween={32}>
+      {(noFilter ? productData : filteredProduct)?.map((product) => {
+        return (
+          <SwiperSlide key={product.id}>
+            <ProductItem product={product} />
+          </SwiperSlide>
+        );
+      })}
+    </Swiper>
+  ) : (
+    <div>There's no product to be shown here</div>
   );
 }
 

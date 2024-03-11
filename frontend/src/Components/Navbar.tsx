@@ -53,16 +53,25 @@ export function Navbar({ gapRef }: Props) {
       className="sticky top-0 width-full duration-150 z-50"
       style={{ background: showBackground ? "white" : "transparent" }}
     >
-      <ul className="font-body grid grid-cols-3 items-center text-small max-w-[70rem] mx-auto py-1 px-8 relative">
-        <div className="flex gap-8">
+      <ul className="font-body grid grid-cols-2 items-center text-small max-w-[70rem] mx-auto py-1 px-8 relative">
+        {/* <div className="flex gap-8">
           {navbarItem.map((item) => (
             <li className="hover:text-main/60 cursor-pointer">{item.name}</li>
           ))}
+        </div> */}
+        <div className="flex gap-8 items-center justify-start">
+          <div className="scale-[60%]">
+            <Icons icon="logo" />
+          </div>
+          {userData?.name && (
+            <>
+              <li>Wishlist</li>
+              <CartPopup />
+            </>
+          )}
         </div>
-        <div className="scale-[60%] justify-self-center">
-          <Icons icon="logo" />
-        </div>
-        <div className="flex gap-8 [&>li:hover]:text-main/60 [&>li]:cursor-pointer justify-self-end items-center">
+
+        <div className="flex gap-4 [&>li:hover]:text-main/60 [&>li]:cursor-pointer justify-self-end items-center">
           {userData?.name ? (
             <li>
               <Button
@@ -72,22 +81,25 @@ export function Navbar({ gapRef }: Props) {
                   });
                   handleLogout();
                 }}
+                className="px-6 py-2 border-[1px] rounded-md border-main hover:bg-light hover:text-body"
               >
                 {isLoading?.logout ? <Spinner /> : "Logout"}
               </Button>
             </li>
           ) : (
             <li>
-              <Button to="/login">Login</Button>
+              <Button
+                to="/login"
+                className="px-6 py-2 border-[1px] rounded-md border-main hover:bg-light hover:text-body"
+              >
+                Login
+              </Button>
             </li>
           )}
-          <li>Wishlist</li>
-
-          <CartPopup />
-
           {userData?.name && userData?.role === "Admin" && (
-            <li className="bg-main px-4 py-2 text-body rounded-md hover:bg-light [&:hover>button]:text-body">
+            <li>
               <Button
+                className="bg-main px-4 py-2 text-body rounded-md hover:bg-light hover:text-body"
                 to="/dashboard"
                 onClick={() => {
                   setIsLoading((cur) => {

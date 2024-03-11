@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import { APIError } from "../Services/API";
 import { API_URL } from "../Services/config";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 type TRegisterFields = {
   name: string;
@@ -67,7 +68,7 @@ export default function Register() {
     setError,
     formState: { errors },
   } = useForm<TRegisterFields>();
-  const navigate = useNavigate();
+  const { handleLogin } = useAuth();
 
   const mutation = useMutation(registerUser, {
     onError: (error: AxiosError) => {
@@ -86,10 +87,7 @@ export default function Register() {
         });
       });
     },
-    onSuccess: (data) => {
-      localStorage.setItem("token", data.data.data.token);
-      navigate("/home");
-    },
+    onSuccess: handleLogin,
   });
 
   const onSubmit: SubmitHandler<TRegisterFields> = (value) => {
