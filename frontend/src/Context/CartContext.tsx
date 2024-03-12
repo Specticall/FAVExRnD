@@ -28,12 +28,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  // useEffect(() => {
-  //   if (!userData?.id) return;
-  //   console.log("CHANGE USER, REFETCH CART");
-  //   cartQuery.refetch();
-  // }, [userData?.id, cartQuery]);
-
   const productsInCart = (
     cartQuery.data?.data as TAPIResponse<{ cart: TCart[] } | undefined>
   )?.data?.cart;

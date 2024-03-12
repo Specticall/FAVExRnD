@@ -14,7 +14,6 @@ import { useCart } from "../Context/CartContext";
 import { IMAGE_PATH, convertToRupiah } from "../utils/helper";
 import { useState } from "react";
 import { useModal } from "../Context/ModalContext";
-import { useNavigate } from "react-router-dom";
 
 const shippingMethod = [
   { id: 1, label: "Grab Express" },

@@ -62,7 +62,12 @@ export function CartPopup() {
                 {productsInCart && productsInCart.length > 0 ? (
                   <ul className="grid gap-5">
                     {productsInCart?.map((cartItem) => {
-                      return <CartItem product={cartItem.product} />;
+                      return (
+                        <CartItem
+                          product={cartItem.product}
+                          key={`${cartItem.id}-cart-item`}
+                        />
+                      );
                     })}
                   </ul>
                 ) : (

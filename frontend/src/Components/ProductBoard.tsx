@@ -62,7 +62,10 @@ export function ProductBoard() {
                 product.price * (1 - product.discount);
 
               return (
-                <SwiperSlide className="h-[40rem] grid grid-rows-[minmax(0,1fr)_5rem] gap-4">
+                <SwiperSlide
+                  className="h-[40rem] grid grid-rows-[minmax(0,1fr)_5rem] gap-4"
+                  key={`${product.id}-product-board-item`}
+                >
                   <div className="overflow-hidden">
                     <img
                       src={`${IMAGE_PATH}/${product.img}`}

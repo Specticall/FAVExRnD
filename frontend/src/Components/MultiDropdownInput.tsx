@@ -99,6 +99,7 @@ export default function MultiDropdownInput<
             {options.map((option) => {
               return (
                 <li
+                  key={`${key}-${option.id}-dropdown-multi-option`}
                   className=" text-main py-2 px-4 bg-[#FFFCFA] hover:bg-[#dcd7d3] cursor-pointer"
                   style={
                     selectedId.includes(option.id)
