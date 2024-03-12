@@ -1,12 +1,14 @@
 import { useState } from "react";
 import ProductList from "./ProductList";
 import { TCategory } from "../Context/DashboardContext";
+import { useApp } from "../Context/AppContext";
 import { useHome } from "../Context/HomeContext";
 
 // type TProductType = (typeof productType)[number];
 
 export function Products() {
-  const { categoryData, setFilter, selectedFilter } = useHome();
+  const { categoryData } = useApp();
+  const { setFilter, selectedFilter } = useHome();
 
   const [type, setType] = useState<TCategory | undefined>(categoryData?.[0]);
 

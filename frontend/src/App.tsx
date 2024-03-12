@@ -3,7 +3,7 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
-import Home, { loader as homeLoader } from "./Pages/Home";
+import Home from "./Pages/Home";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -12,6 +12,8 @@ import { ProductBoard } from "./Components/ProductBoard";
 import ProductEditor from "./Components/ProductEditor";
 import PopupProvider from "./Context/PopupContext";
 import RouterFirstChild from "./Components/RouterFirstChild";
+import AppLayout, { loader as appLoader } from "./Pages/AppLayout";
+import Checkout from "./Pages/Checkout";
 
 const router = createBrowserRouter([
   {
@@ -19,13 +21,24 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Navigate to="/home" />,
+        element: <Navigate to="/app/home" />,
       },
       {
-        loader: homeLoader,
-        path: "/home",
-        element: <Home />,
+        loader: appLoader,
+        path: "/app",
+        element: <AppLayout />,
+        children: [
+          {
+            path: "home",
+            element: <Home />,
+          },
+          {
+            path: "checkout",
+            element: <Checkout />,
+          },
+        ],
       },
+
       {
         path: "/register",
         element: <Register />,

@@ -64,7 +64,7 @@ export default function Login() {
       <section className="max-w-[70rem] mx-auto grid place-items-center min-h-screen py-6">
         <Button
           className="absolute top-[2rem] left-[4rem] font-body flex items-center justify-center gap-2 hover:text-light"
-          to="/home"
+          to="/app/home"
         >
           <i className="bx bx-left-arrow-alt text-heading"></i>
           <p>Back</p>

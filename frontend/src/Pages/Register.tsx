@@ -7,7 +7,6 @@ import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import { APIError } from "../Services/API";
 import { API_URL } from "../Services/config";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 
 type TRegisterFields = {
@@ -101,7 +100,7 @@ export default function Register() {
       <section className="max-w-[70rem] mx-auto grid place-items-center h-full py-6">
         <Button
           className="absolute top-[2rem] left-[4rem] font-body flex items-center justify-center gap-2 hover:text-light"
-          to="/home"
+          to="/app/home"
         >
           <i className="bx bx-left-arrow-alt text-heading"></i>
           <p>Back</p>

@@ -10,7 +10,7 @@ export const loader = async () => {
     const data = await getAllData();
     return data;
   } catch (err) {
-    return redirect("/home");
+    return redirect("/app/home");
   }
 };
 
@@ -37,7 +37,7 @@ function Heading() {
       </h1>{" "}
       <Button
         className="font-body flex items-center justify-center gap-2 hover:text-light"
-        to="/home"
+        to="/app/home"
       >
         <i className="bx bx-left-arrow-alt text-heading"></i>
         <p>Back</p>

@@ -1,26 +1,18 @@
 import { MutableRefObject, useEffect, useState } from "react";
 import Icons from "./Icons";
 import Button from "./Button";
-import { useHome } from "../Context/HomeContext";
+import { useApp } from "../Context/AppContext";
 import Spinner from "./Spinner";
 import { CartPopup } from "./CartPopup";
 import { useAuth } from "../Context/AuthContext";
 
-const navbarItem = [
-  { name: "Men" },
-  { name: "Women" },
-  { name: "About" },
-  { name: "Contact" },
-];
-
 type Props = {
   // Used so that the intersection observer can observer the hero element (used for scroll reveal);
   gapRef: MutableRefObject<HTMLElement | null>;
-  // role?: "Admin" | "Basic";
 };
 
 export function Navbar({ gapRef }: Props) {
-  const { userData } = useHome();
+  const { userData } = useApp();
   const { handleLogout } = useAuth();
   const [isLoading, setIsLoading] = useState<{
     logout: boolean;
@@ -54,18 +46,12 @@ export function Navbar({ gapRef }: Props) {
       style={{ background: showBackground ? "white" : "transparent" }}
     >
       <ul className="font-body grid grid-cols-2 items-center text-small max-w-[70rem] mx-auto py-1 px-8 relative">
-        {/* <div className="flex gap-8">
-          {navbarItem.map((item) => (
-            <li className="hover:text-main/60 cursor-pointer">{item.name}</li>
-          ))}
-        </div> */}
         <div className="flex gap-8 items-center justify-start">
           <div className="scale-[60%]">
             <Icons icon="logo" />
           </div>
           {userData?.name && (
             <>
-              <li>Wishlist</li>
               <CartPopup />
             </>
           )}

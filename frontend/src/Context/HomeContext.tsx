@@ -1,28 +1,16 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { TProduct, TUserData } from "../Services/API";
+import { useApp } from "./AppContext";
 import { TCategory } from "./DashboardContext";
-import { useLoaderData } from "react-router-dom";
 
 type THomeContextValues = {
-  userData?: TUserData;
-  productData?: (TProduct & { user: TUserData })[];
-  categoryData?: TCategory[];
   setFilter: (categoryId: number) => void;
-  selectedFilter: TCategory;
+  selectedFilter: TCategory | undefined;
 };
 
 const HomeContext = createContext<THomeContextValues | null>(null);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
-  const loadedData = useLoaderData() as {
-    userData?: TUserData;
-    productData?: (TProduct & { user: TUserData })[];
-    categoryData?: TCategory[];
-  };
-  const userData = loadedData?.userData;
-  const productData = loadedData?.productData;
-  const categoryData = loadedData?.categoryData;
-
+  const { categoryData } = useApp();
   const [selectedFilter, setSelectedFilter] = useState<TCategory | undefined>(
     categoryData?.[0]
   );
@@ -40,9 +28,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   return (
     <HomeContext.Provider
       value={{
-        userData,
-        categoryData,
-        productData,
         setFilter,
         selectedFilter,
       }}

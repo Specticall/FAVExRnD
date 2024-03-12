@@ -6,9 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Outlet, useNavigate, useRevalidator } from "react-router-dom";
-import CategoryModal from "../Components/CategoryModal";
-import { ModalProvider } from "./ModalContext";
+import { useNavigate, useRevalidator } from "react-router-dom";
 
 type TAuthContextValues = {
   isAuthenticated: boolean;
@@ -40,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleLogout = () => {
+    navigate("/app/home");
     setToken(undefined);
     localStorage.removeItem("token");
     revalidator.revalidate();
@@ -55,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(token);
     setRole(role);
 
-    navigate("/home");
+    navigate("/app/home");
   };
 
   const AUTH_HEADER = {

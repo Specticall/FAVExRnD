@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { IMAGE_PATH, convertToRupiah } from "../utils/helper";
-import { useHome } from "../Context/HomeContext";
+import { useApp } from "../Context/AppContext";
 import { TProduct } from "../Services/API";
 import Button from "./Button";
 import Spinner from "./Spinner";
@@ -20,7 +20,7 @@ export default function ProductList({
   noFilter?: boolean;
   label: string;
 }) {
-  const { productData } = useHome();
+  const { productData } = useApp();
 
   const filteredProduct = productData
     ?.filter((product) => {
