@@ -36,9 +36,6 @@ export default function useCartMutation({
       return axios.post(`${API_URL}/api/cart`, product, AUTH_HEADER);
     },
     {
-      onMutate(data) {
-        console.log(data, AUTH_HEADER);
-      },
       onSuccess(data) {
         const serverMessage = (data.data as TAPIResponse<{ msg: string }>).data
           .msg;

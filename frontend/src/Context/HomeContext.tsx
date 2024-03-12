@@ -19,12 +19,13 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     productData?: (TProduct & { user: TUserData })[];
     categoryData?: TCategory[];
   };
-
-  const [selectedFilter, setSelectedFilter] = useState<TCategory | undefined>();
-
   const userData = loadedData?.userData;
   const productData = loadedData?.productData;
   const categoryData = loadedData?.categoryData;
+
+  const [selectedFilter, setSelectedFilter] = useState<TCategory | undefined>(
+    categoryData?.[0]
+  );
 
   const setFilter = (categoryId: number) => {
     const targetCategory = categoryData?.find(
