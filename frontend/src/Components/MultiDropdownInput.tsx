@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function MultiDropdownInput<
   T extends { label: string; id: number }
@@ -6,16 +6,36 @@ export default function MultiDropdownInput<
   options,
   onSelect = () => {},
   defaultValue = [],
+  singleSelect = false,
+  className = "",
+  placeholder = "Select Category",
+  errorMessage = "",
 }: {
   options: T[];
   onSelect?: (selected: T[]) => void;
   defaultValue?: T["id"][];
+  singleSelect?: boolean;
+  className?: string;
+  placeholder?: string;
+  errorMessage?: string;
 }) {
   const [selectedId, setSelected] = useState<T["id"][]>(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
 
+  const key = useMemo(
+    () => `multidrop-down_${Math.floor(Math.random() * 1000)}`,
+    []
+  );
+
   const handleSelect = (optionId: T["id"]) => () => {
     setSelected((selectedId) => {
+      if (singleSelect) {
+        const newSelected = options?.find((option) => option.id === optionId);
+        onSelect(newSelected ? [newSelected] : []);
+
+        return [optionId];
+      }
+
       const isAlreadySelected = selectedId.includes(optionId);
 
       const newSelected = isAlreadySelected
@@ -31,6 +51,17 @@ export default function MultiDropdownInput<
     });
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest(`.${key}`)) return;
+      setIsOpen(false);
+    };
+    window.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [key]);
+
   const selectedItems = options.filter((option) =>
     selectedId.includes(option.id)
   );
@@ -39,17 +70,18 @@ export default function MultiDropdownInput<
     setIsOpen((current) => !current);
   };
   return (
-    <div className="relative">
+    <div className={`relative ${key} test`}>
       <div
-        className="px-4 py-2 border-[1.5px] border-main rounded-md cursor-pointer flex justify-between items-center group"
+        className={`px-4 py-2 border-[1.5px] border-main rounded-md cursor-pointer flex justify-between items-center group ${className}`}
         onClick={handleOpen}
+        style={errorMessage ? { borderColor: "#CC2A06" } : undefined}
       >
         <p>
           {selectedItems.reduce((selected, item) => {
             return `${selected}${selected.length > 0 ? ",  " : ""}${
               item.label
             }`;
-          }, "") || "Select Category"}
+          }, "") || placeholder}
         </p>
         <i
           className="bx bx-chevron-down text-title text-main transition-all duration-300 group-hover:text-main/50"
@@ -67,6 +99,7 @@ export default function MultiDropdownInput<
             {options.map((option) => {
               return (
                 <li
+                  key={`${key}-${option.id}-dropdown-multi-option`}
                   className=" text-main py-2 px-4 bg-[#FFFCFA] hover:bg-[#dcd7d3] cursor-pointer"
                   style={
                     selectedId.includes(option.id)
@@ -85,7 +118,10 @@ export default function MultiDropdownInput<
             })}
           </ul>
         </div>
-      </div>
+      </div>{" "}
+      {errorMessage && (
+        <p className="text-danger mt-2 text-small">{errorMessage}</p>
+      )}
     </div>
   );
 }

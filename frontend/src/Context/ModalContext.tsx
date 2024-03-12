@@ -2,6 +2,7 @@ import {
   ReactElement,
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useState,
 } from "react";
@@ -11,6 +12,7 @@ type TModalContextValues = {
   closeModal: () => void;
   triggerRevalidation: () => void;
   shouldRevalidate: number;
+  modalState: "open" | "close";
 };
 
 const ModalContext = createContext<TModalContextValues | null>(null);
@@ -47,16 +49,22 @@ export function ModalProvider({
     setShouldRevalidate(Math.random());
   };
 
-  function closeModal() {
+  const closeModal = useCallback(() => {
     setShow(false);
-  }
+  }, [setShow]);
 
   return (
     <ModalContext.Provider
-      value={{ showModal, closeModal, triggerRevalidation, shouldRevalidate }}
+      value={{
+        modalState: show ? "open" : "close",
+        showModal,
+        closeModal,
+        triggerRevalidation,
+        shouldRevalidate,
+      }}
     >
       <div
-        className="fixed inset-0 bg-black/50 z-30 grid place-items-center transition-all duration-300 opacity-0 cursor-pointer"
+        className="fixed inset-0 bg-black/50 z-[120] grid place-items-center transition-all duration-300 opacity-0 cursor-pointer"
         style={{
           visibility: show ? "visible" : "hidden",
           opacity: show ? "1" : "0",
@@ -67,7 +75,7 @@ export function ModalProvider({
         }}
       ></div>
       <div
-        className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-40 transition-all duration-300"
+        className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[140] transition-all duration-300"
         style={{
           visibility: show ? "visible" : "hidden",
           opacity: show ? "1" : "0",

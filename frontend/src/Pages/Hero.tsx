@@ -1,6 +1,6 @@
 import Button from "../Components/Button";
 import Icons from "../Components/Icons";
-import { useHome } from "../Context/HomeContext";
+import { useApp } from "../Context/AppContext";
 
 export function HeroBG() {
   return (
@@ -16,7 +16,7 @@ export function HeroBG() {
 }
 
 export function Hero() {
-  const { userData } = useHome();
+  const { userData } = useApp();
 
   const username = userData?.name;
 

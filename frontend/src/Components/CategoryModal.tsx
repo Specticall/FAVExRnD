@@ -108,7 +108,10 @@ export default function CategoryModal() {
       <ul className="flex flex-wrap gap-x-4 gap-y-2">
         {categories?.map((category) => {
           return (
-            <li className="flex-1 flex justify-between items-center bg-main text-body rounded-lg px-4 py-2 whitespace-nowrap gap-4 max-w-fit hover:bg-light cursor-pointer">
+            <li
+              className="flex-1 flex justify-between items-center bg-main text-body rounded-lg px-4 py-2 whitespace-nowrap gap-4 max-w-fit hover:bg-light cursor-pointer"
+              key={`${category.id}-category-modal`}
+            >
               {deleteAction.isLoading && isGettingDeletedId === category.id ? (
                 <Spinner />
               ) : (

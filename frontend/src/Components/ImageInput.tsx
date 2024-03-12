@@ -32,11 +32,10 @@ export default function ImageInput({
       className="relative rounded-md overflow-hidden group max-h-[40rem]"
       onClick={openImageInput}
     >
-      {/* <div className="overflow-hidden h-full"> */}
-      <p className="absolute bg-black/30 inset-0 text-body text-medium flex items-center gap-2 justify-center  transition-all opacity-0 cursor-pointer group-hover:opacity-100 duration-200">
+      <div className="absolute bg-black/30 inset-0 text-body text-medium flex items-center gap-2 justify-center  transition-all opacity-0 cursor-pointer group-hover:opacity-100 duration-200">
         <i className="bx bx-edit"></i>
         <p className="text-medium">Edit Image</p>
-      </p>
+      </div>
       <input
         type="file"
         className="hidden"

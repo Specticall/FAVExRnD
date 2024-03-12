@@ -1,11 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import {
-  IMAGE_PATH,
-  convertToRupiah,
-  hasCommonElements,
-} from "../utils/helper";
-import { useHome } from "../Context/HomeContext";
+import { IMAGE_PATH, convertToRupiah } from "../utils/helper";
+import { useApp } from "../Context/AppContext";
 import { TProduct } from "../Services/API";
 import Button from "./Button";
 import Spinner from "./Spinner";
@@ -17,16 +13,18 @@ export default function ProductList({
   categoryFilter,
   isDiscount = false,
   noFilter = false,
+  label = "",
 }: {
   categoryFilter?: TCategory;
   isDiscount?: boolean;
   noFilter?: boolean;
+  label: string;
 }) {
-  const { productData } = useHome();
+  const { productData } = useApp();
 
   const filteredProduct = productData
     ?.filter((product) => {
-      if (!categoryFilter?.id) return true;
+      if (!categoryFilter?.id || noFilter) return true;
       return (
         product.categories.some(
           (category) => category.id === categoryFilter.id
@@ -34,26 +32,47 @@ export default function ProductList({
       );
     })
     .filter((product) => {
-      return isDiscount && product.discount && product.discount > 0;
+      if (noFilter || !isDiscount) return true;
+      return product.discount && product.discount > 0;
     });
 
-  return productData && productData.length > 0 ? (
-    <Swiper slidesPerView={4} spaceBetween={32}>
-      {(noFilter ? productData : filteredProduct)?.map((product) => {
-        return (
-          <SwiperSlide key={product.id}>
-            <ProductItem product={product} />
-          </SwiperSlide>
-        );
-      })}
-    </Swiper>
-  ) : (
-    <div>There's no product to be shown here</div>
-  );
+  const isEmpty = filteredProduct && filteredProduct?.length <= 0;
+
+  if (noFilter && (!productData || productData?.length === 0)) {
+    return (
+      <div className="px-8 my-32">
+        <h2 className="text-center text-large font-semibold font-body text-light">
+          No Products Yet
+        </h2>
+        <p className="font-body text-center text-light/70 mt-2">
+          Check back later!, we're still working on our products!
+        </p>
+      </div>
+    );
+  }
+
+  return !isEmpty ? (
+    <div className="px-8 mt-16">
+      <h2 className="text-large font-semibold mb-4 text-main">{label}</h2>
+      {productData && productData.length > 0 ? (
+        <Swiper slidesPerView={4} spaceBetween={32}>
+          {filteredProduct?.map((product) => {
+            return (
+              <SwiperSlide key={product.id}>
+                <ProductItem product={product} />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      ) : (
+        <div>There's no product to be shown here</div>
+      )}
+    </div>
+  ) : null;
 }
 
 function ProductItem({ product }: { product: TProduct }) {
-  const { isInCart } = useCart();
+  const { isInCart, cartQuery } = useCart();
   const { addToCart, removeFromCart, isDeleting, isCreating } = useCartMutation(
     { product }
   );
@@ -97,7 +116,10 @@ function ProductItem({ product }: { product: TProduct }) {
         {isInCart(product.id) ? (
           <Button
             className="px-4 py-2 bg-transparent text-main border-[1.5px] border-main rounded-md flex-1 hover:bg-light hover:text-body cursor-pointer flex items-center justify-center"
-            onClick={removeFromCart}
+            onClick={() => {
+              if (cartQuery.isRefetching || cartQuery.isFetching) return;
+              removeFromCart();
+            }}
           >
             {isDeleting ? <Spinner /> : "Remove from cart"}
           </Button>

@@ -10,7 +10,7 @@ export const loader = async () => {
     const data = await getAllData();
     return data;
   } catch (err) {
-    return redirect("/home");
+    return redirect("/app/home");
   }
 };
 
@@ -37,7 +37,7 @@ function Heading() {
       </h1>{" "}
       <Button
         className="font-body flex items-center justify-center gap-2 hover:text-light"
-        to="/home"
+        to="/app/home"
       >
         <i className="bx bx-left-arrow-alt text-heading"></i>
         <p>Back</p>
@@ -65,8 +65,16 @@ function Statistics() {
         style: { backgroundColor: "#392A2A", color: "white" },
       },
       {
-        title: "Total Sales",
-        content: convertToRupiah(19250000),
+        title: "Most Expensive Product",
+        content:
+          productData?.reduce(
+            (max, product) => {
+              return max.price < product.price
+                ? { price: product.price, name: product.name }
+                : max;
+            },
+            { name: productData[0].name, price: productData[0].price }
+          )?.name || "No Products Yet",
         style: { backgroundColor: "#6F6758", color: "white" },
       },
     ],
@@ -78,7 +86,11 @@ function Statistics() {
       <p className="mb-4 font-semibold text-main">Statistics</p>
       <ul className="grid grid-cols-3 gap-8">
         {statistics.map(({ title, content, style }) => (
-          <article className="px-8 py-6 rounded-xl" style={style}>
+          <article
+            className="px-8 py-6 rounded-xl"
+            style={style}
+            key={`statistics-${title}`}
+          >
             <p className="text-small">{title}</p>
             <h3 className="text-medium font-semibold tracking-wide">
               {content}
