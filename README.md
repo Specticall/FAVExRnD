@@ -12,9 +12,11 @@ git init
 git pull https://github.com/Specticall/FAVExRnD
 ```
 
-#2. Setup Laravel Backend (w/ Apache & MySQL)
+#2. Setup Laravel Backend 
+> (Make sure XAMPP is running the Apache & MySQL servers)
 ```
 cd backend
+composer i
 php artisan key:generate
 php artisan migrate
 php artisan storage:link
