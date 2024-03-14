@@ -2,7 +2,6 @@ import { getAllData } from "../Services/API";
 import { Outlet, redirect } from "react-router-dom";
 import { DashboardProvider, useDashboard } from "../Context/DashboardContext";
 import { useMemo } from "react";
-import { convertToRupiah } from "../utils/helper";
 import Button from "../Components/Button";
 
 export const loader = async () => {
@@ -73,7 +72,7 @@ function Statistics() {
                 ? { price: product.price, name: product.name }
                 : max;
             },
-            { name: productData[0].name, price: productData[0].price }
+            { name: productData[0]?.name, price: productData[0]?.price }
           )?.name || "No Products Yet",
         style: { backgroundColor: "#6F6758", color: "white" },
       },

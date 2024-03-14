@@ -116,6 +116,11 @@ export default function MultiDropdownInput<
                 </li>
               );
             })}
+            {options?.length === 0 && (
+              <div className="bg-body px-4 py-4 text-light/50 text-small text-center">
+                There's nothing to be shown here
+              </div>
+            )}
           </ul>
         </div>
       </div>{" "}
