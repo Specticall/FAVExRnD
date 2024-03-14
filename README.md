@@ -5,7 +5,7 @@ E-commerce web application made with React and Laravel.
 
 ## Installation
 
-> [!Important] When installing the backend and frontend, create seperate terminal instances
+> Important : When installing the backend and frontend, create seperate terminal instances
 
 #1.  Clone this github repository
 ```
