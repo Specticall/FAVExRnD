@@ -35,6 +35,6 @@ npm run dev
 
 * The first registered user is assigned as admin
 
-## LICENSE
+## License
 
 Developed by ©Kelompok5
