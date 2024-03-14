@@ -1,0 +1,33 @@
+
+# RndxFAVE Project
+
+E-commerce web application made with React and Laravel. 
+
+## Installation
+
+
+#1.  Clone this github repository
+```
+git init
+git pull https://github.com/Specticall/FAVExRnD
+```
+
+#2. Setup Laravel Backend (w/ Apache & MySQL)
+```
+cd backend
+php artisan key:generate
+php artisan migrate
+php artisan storage:link
+php artisan serve
+```
+
+#3. Setup React Vite Frontend
+```
+cd frontend
+npm i
+npm run dev
+```
+
+## Usage Notes
+
+* The first registered user is assigned as admin
