@@ -18,31 +18,33 @@ export function Products() {
 
   return (
     <section className="mt-24 max-w-[70rem] mx-auto ">
-      <ul className="flex justify-center px-16 mt-8 border-[2px] border-main rounded-md mx-8 py-4 text-small font-body gap-8">
-        {categoryData?.map((category, i) => {
-          return (
-            <li
-              key={`${category.id}-${i}-key`}
-              className="hover:text-light cursor-pointer px-4 py-2 rounded-md"
-              style={
-                type?.id === category.id
-                  ? {
-                      fontWeight: "400",
-                      background: "#392A2A",
-                      color: "#F9F1E9",
-                    }
-                  : undefined
-              }
-              onClick={() => {
-                handleSelectType(category);
-                setFilter(category.id);
-              }}
-            >
-              {category.label}
-            </li>
-          );
-        })}
-      </ul>
+      {categoryData && categoryData?.length > 0 && (
+        <ul className="flex justify-center px-16 mt-8 border-[2px] border-main rounded-md mx-8 py-4 text-small font-body gap-8">
+          {categoryData?.map((category, i) => {
+            return (
+              <li
+                key={`${category.id}-${i}-key`}
+                className="hover:text-light cursor-pointer px-4 py-2 rounded-md"
+                style={
+                  type?.id === category.id
+                    ? {
+                        fontWeight: "400",
+                        background: "#392A2A",
+                        color: "#F9F1E9",
+                      }
+                    : undefined
+                }
+                onClick={() => {
+                  handleSelectType(category);
+                  setFilter(category.id);
+                }}
+              >
+                {category.label}
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <ProductList isDiscount categoryFilter={selectedFilter} label="On Sale" />
       <ProductList
         categoryFilter={selectedFilter}

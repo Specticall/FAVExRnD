@@ -46,11 +46,11 @@ export function Footer() {
           <div className="text-body">
             <h3 className="text-large mb-6">Our Socials</h3>
             <div className="grid grid-cols-3 gap-8">
-              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square grid place-items-center bx bxl-instagram"></i>
-              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square grid place-items-center bx bxl-facebook-circle"></i>
-              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square grid place-items-center bx bxl-twitter"></i>
-              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square grid place-items-center bx bx-envelope"></i>
-              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square grid place-items-center bx bxs-phone"></i>
+              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square [&&]:grid place-items-center bx bxl-instagram"></i>
+              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square [&&]:grid place-items-center bx bxl-facebook-circle"></i>
+              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square [&&]:grid place-items-center bx bxl-twitter"></i>
+              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square [&&]:grid place-items-center bx bx-envelope"></i>
+              <i className="text-title text-main bg-body rounded-full cursor-pointer w-[2.5rem] aspect-square [&&]:grid place-items-center bx bxs-phone"></i>
             </div>
           </div>
         </div>
