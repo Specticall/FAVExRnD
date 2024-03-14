@@ -1,7 +1,7 @@
 
 # RndxFAVE Project
 
-E-commerce web application made with React and Laravel. 
+E-commerce web application made with React and Laravel.
 
 ## Installation
 
@@ -34,3 +34,7 @@ npm run dev
 ## Usage Notes
 
 * The first registered user is assigned as admin
+
+## LICENSE
+
+Developed by ©Kelompok5
